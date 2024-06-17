@@ -1,4 +1,9 @@
 {
+    "ts-node": {
+        "compilerOptions": {
+            "module": "commonjs"
+        }
+    },
   "compilerOptions": {
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
@@ -18,8 +23,12 @@
       }
     ],
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./*"],
+            "cheerio": [
+                "./node_modules/cheerio/lib/index.d.ts"
+            ]
     }
+    
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
   "exclude": ["node_modules"]
