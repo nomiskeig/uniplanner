@@ -13,6 +13,13 @@ export function parseInDepthModules() {
     let modules: InDepthModule[] = []
     let parsingindephmodules = true;
     let i = 0;
+    let allModules: InDepthModule = {
+        name: "all modules",
+        modules: [],
+        info: "contains all modules"
+
+    }
+    modules.push(allModules)
     lists.each(function(i, elem) {
         let t = $(elem).text().trim();
         if (t.startsWith("Wahlbereich")) {
@@ -40,6 +47,7 @@ export function parseInDepthModules() {
 
             //})
             modules.at(-1)!.modules.push($(elem).find("a").attr('href')!.substring(1));
+            allModules.modules.push($(elem).find("a").attr('href')!.substring(1))
 
         }
 
@@ -51,6 +59,17 @@ export function parseInDepthModules() {
 }
 
 let modules = parseModules();
+// add the partof things to the modules
+
+for (let module of modules) {
+    for (let indepthmodule of indepthmodules) {
+        if (indepthmodule.modules.includes(module.id)) {
+            module.partOf.push(indepthmodule)
+        }
+
+    }
+
+}
 //console.log(JSON.stringify(modules));
 fs.writeFile('/home/simon/dev/uniplanner/parsers/infomasterModuls.json', JSON.stringify(modules), (err: any) => {});
 //console.log(modules)
@@ -142,7 +161,7 @@ export function parseModules(): Module[] {
             name: name,
             id: id,
             responsible: responsible,
-            ects: +ects,
+            ects: ects,
             turnus: turnus,
             compulsoryParts: compulsoryPartsIDs,
             requirements: requirements,
@@ -150,7 +169,7 @@ export function parseModules(): Module[] {
             content: content,
             qualificationGoals: qualificationGoals,
             recommendations: recommendations,
-            partOf: partOf
+            partOf: []
 
 
 
