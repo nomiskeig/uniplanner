@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@tanstack/react-table": "^8.17.3",
     "@types/cheerio": "^0.22.35",
     "cheerio": "^1.0.0-rc.12",
     "next": "14.2.4",
