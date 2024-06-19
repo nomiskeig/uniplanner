@@ -2,7 +2,7 @@ export interface Module {
     name: String
     id: ModuleID,
     responsible: String,
-    ects: Number,
+    ects: String,
     turnus: String,
     compulsoryParts: CompulsoryPartID[],
     requirements: String,
@@ -10,12 +10,12 @@ export interface Module {
     content: String,
     qualificationGoals: String,
     recommendations: String | null
-    partOf: String[]
+    partOf: InDepthModule[]
 
 
 }
-export type CompulsoryPartID = String
-export type ModuleID = String
+export type CompulsoryPartID = string
+export type ModuleID = string
 export interface PartPerformance {
     courses: Course[]
 
