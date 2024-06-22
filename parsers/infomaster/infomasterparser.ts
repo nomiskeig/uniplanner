@@ -1,7 +1,6 @@
-import { CompulsoryPartID, InDepthModule, Module, PartPerformance } from "@/app/types";
-
 const fs = require("fs")
 import cheerio from "cheerio";
+import { CompulsoryPartID, InDepthModule, Module } from "../types";
 
 const file = fs.readFileSync('/home/simon/dev/uniplanner/htmlsources/infomaster.html')
 const $ = cheerio.load(file)
@@ -123,7 +122,7 @@ export function parseModules(): Module[] {
         let successControl = "";
         let content = "";
         let requirements = "";
-        let recommendations = null;
+        let recommendations = "";
         let qualificationGoals = "";
 
         let current = compulsoryPartsTable.next();
