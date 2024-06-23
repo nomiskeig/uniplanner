@@ -1,6 +1,6 @@
 import mariadb from "mariadb";
 import 'dotenv/config'
-import { Category, CategoryType, Module } from "./types";
+import { Category, CategoryType, Module, ModuleToCategoryMapping } from "./types";
 let conn: null | Promise<mariadb.Connection> = null;
 
 async function getConnection() {
@@ -25,7 +25,7 @@ export async function dropTables() {
     const conn = await getConnection();
     try {
         await conn.query('SET foreign_key_checks = 0;')
-        await conn.query('DROP TABLE if exists category, categoryType, studyCourse, module');
+        await conn.query('DROP TABLE if exists category, categoryType, studyCourse, module, moduleToCategoryMapping');
         await conn.query('SET foreign_key_checks = 1;')
     } finally {
     }
@@ -73,8 +73,19 @@ export async function createTables() {
         + 'qualificationGoals text,'
         + 'recommendations text,'
         + "primary key(module_id),"
-            + 'foreign key(studyCourse) references studyCourse(studyCourse_id)'
+        + 'foreign key(studyCourse) references studyCourse(studyCourse_id)'
 
+        + ')');
+
+    await conn.query('CREATE TABLE moduleToCategoryMapping('
+        + 'moduleToCategoryMapping_id int auto_increment,'
+        + 'category int,'
+        + 'module int,'
+        + 'studyCourse int,'
+        + 'primary key(moduleToCategoryMapping_id),'
+        + 'foreign key(category) references category(category_id),'
+        + 'foreign key(module) references module(module_id),'
+        + 'foreign key(studyCourse) references studyCourse(studyCourse_id)'
         + ')');
 
 
@@ -83,9 +94,23 @@ export async function createTables() {
 
 }
 
+export async function addModuleToCategoryMappings(mappings: ModuleToCategoryMapping[], studyCourseID: number) {
+    const conn = await getConnection();
+    const data = [];
+    for (let m of mappings) {
+        const categoryID = await conn.query("SELECT category_id from category where name = (?)", m.categoryName).then(res => res[0].category_id)
+        const moduleID = await conn.query("SELECT module_id from module where module_string_id = (?)", m.moduleID).then(res => res[0].module_id)
+        data.push([categoryID, moduleID, studyCourseID])
+
+    }
+    await conn.batch('INSERT INTO moduleToCategoryMapping (category, module, studyCourse) values (?, ?, ?)', data)
+
+
+}
+
 export async function addModules(modules: Module[], studyCourseID: number) {
     const conn = await getConnection();
-    
+
     const data = modules.map(m => {
         return [m.id, studyCourseID, m.name, m.responsible, m.ects, m.requirements, m.successControl, m.content, m.qualificationGoals, m.recommendations]
     })

@@ -1,4 +1,4 @@
-import { addCategories, closeConnection,  addCategoryTypes, addStudyCourse, setup, addModules } from "./database.ts";
+import { addCategories, closeConnection,  addCategoryTypes, addStudyCourse, setup, addModules, addModuleToCategoryMappings } from "./database.ts";
 import {infomasterParser} from "./infomaster/newParser.ts"
 import { CategoryType } from "./types.ts";
 
@@ -22,7 +22,7 @@ for (let m of modules) {
 }
 let mappings = infomasterParser.getModulesToCategoryMappings();
 for (let m of mappings) {
-    //console.log(m)
+    console.log(m)
 }
 
 
@@ -34,6 +34,7 @@ async function insertData() {
     await addCategoryTypes(categoryTypes, studyCourseID);
     await addCategories(categories, studyCourseID);
     await addModules(modules, studyCourseID);
+    await addModuleToCategoryMappings(mappings, studyCourseID);
     await closeConnection();
 
 }
