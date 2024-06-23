@@ -61,7 +61,8 @@ export async function createTables() {
         + ')');
 
     await conn.query('CREATE TABLE module('
-        + 'module_id varchar(255) not null,'
+        + 'module_id int auto_increment,'
+        + 'module_string_id varchar(255) not null,'
         + 'studyCourse int,'
         + 'name varchar(255),'
         + 'responsible varchar(255),'
@@ -88,7 +89,7 @@ export async function addModules(modules: Module[], studyCourseID: number) {
     const data = modules.map(m => {
         return [m.id, studyCourseID, m.name, m.responsible, m.ects, m.requirements, m.successControl, m.content, m.qualificationGoals, m.recommendations]
     })
-    await conn.batch('INSERT INTO module (module_id, studyCourse, name, responsible, ects, requirements, successControl, content, qualificationGoals, recommendations) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', data)
+    await conn.batch('INSERT INTO module (module_string_id, studyCourse, name, responsible, ects, requirements, successControl, content, qualificationGoals, recommendations) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', data)
 
 }
 
