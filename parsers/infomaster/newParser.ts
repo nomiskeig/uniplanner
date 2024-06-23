@@ -169,7 +169,7 @@ export const infomasterParser: Parser = {
 
             if (text.startsWith("Vertiefungsfach")) {
                 categories.push({
-                    type: INDEPTHTYPE,
+                    type: { name: INDEPTHTYPE },
                     name: text.match(/Vertiefungsfach: (.*)/)![1],
                     ...parsedEcts
 
@@ -179,7 +179,7 @@ export const infomasterParser: Parser = {
             }
             if (text.startsWith("Ergänzungsfach:")) {
                 categories.push({
-                    type: SUPPLEMENTARYTYPE,
+                    type: { name: SUPPLEMENTARYTYPE },
                     name: text.match(/Ergänzungsfach: (.*)/)![1],
                     ...parsedEcts
                 })
@@ -188,7 +188,7 @@ export const infomasterParser: Parser = {
             if (text.startsWith("Wahlbereich")) {
                 categories.push({
                     name: "Wahlbereich Informatik",
-                    type: PICKAREA,
+                    type: { name: PICKAREA },
                     ...parsedEcts
                 })
             }
@@ -196,7 +196,7 @@ export const infomasterParser: Parser = {
                 gotMasterThesis = true;
                 categories.push({
 
-                    type: MASTERTHESIS,
+                    type: { name: MASTERTHESIS },
                     name: "Masterarbeit",
 
                     ...parsedEcts
@@ -204,7 +204,7 @@ export const infomasterParser: Parser = {
             }
             if (text.startsWith("Überfachliche")) {
                 categories.push({
-                    type: HIGHERQUALI,
+                    type: { name: HIGHERQUALI },
                     name: "Überfachliche Qualifikationen",
                     ...parsedEcts
                 })

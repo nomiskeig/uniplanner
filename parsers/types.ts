@@ -33,9 +33,13 @@ export interface InDepthModule {
 
 export interface Category {
     name: string,
-    type: string,
+    type: CategoryType,
     minECTS: string,
     maxECTS: string
+}
+
+export interface CategoryType {
+    name: string
 }
 
 
