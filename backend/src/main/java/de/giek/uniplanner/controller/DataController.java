@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import de.giek.uniplanner.dto.ListDataDTO;
@@ -44,9 +45,9 @@ public class DataController {
     }
 
     @GetMapping("/modules")
-    public ResponseEntity<ListDataDTO<ModuleEntity>> getModules(@RequestBody StudyCourseDTO scdto) {
+    public ResponseEntity<ListDataDTO<ModuleEntity>> getModules(@RequestParam int studyCourseID) {
         ListDataDTO<ModuleEntity> res = new ListDataDTO<>();
-        List<ModuleEntity> data = moduleRepo.findByStudyCourse(scdto.getStudyCourseID());
+        List<ModuleEntity> data = moduleRepo.findByStudyCourse(studyCourseID);
         res.setData(data);
         res.setSuccess(true);
         return new ResponseEntity<ListDataDTO<ModuleEntity>>(res, HttpStatus.OK);
@@ -54,9 +55,9 @@ public class DataController {
     }
 
     @GetMapping("/categoryTypes")
-    public ResponseEntity<ListDataDTO<CategoryTypeEntity>> getCategoryTypes(@RequestBody StudyCourseDTO scdto) {
+    public ResponseEntity<ListDataDTO<CategoryTypeEntity>> getCategoryTypes(@RequestParam int studyCourseID) {
         ListDataDTO<CategoryTypeEntity> res = new ListDataDTO<>();
-        List<CategoryTypeEntity> data = ctRepo.findByStudyCourse(scdto.getStudyCourseID());
+        List<CategoryTypeEntity> data = ctRepo.findByStudyCourse(studyCourseID);
         res.setData(data);
         res.setSuccess(true);
         return new ResponseEntity<ListDataDTO<CategoryTypeEntity>>(res, HttpStatus.OK);
