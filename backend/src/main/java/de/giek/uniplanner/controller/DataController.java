@@ -14,9 +14,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import de.giek.uniplanner.dto.ListDataDTO;
 import de.giek.uniplanner.dto.StudyCourseDTO;
+import de.giek.uniplanner.model.CategoryEntity;
 import de.giek.uniplanner.model.CategoryTypeEntity;
 import de.giek.uniplanner.model.ModuleEntity;
 import de.giek.uniplanner.model.StudyCourseEntity;
+import de.giek.uniplanner.repository.CategoryRepo;
 import de.giek.uniplanner.repository.CategoryTypeRepo;
 import de.giek.uniplanner.repository.ModuleRepo;
 import de.giek.uniplanner.repository.StudyCourseRepo;
@@ -32,6 +34,9 @@ public class DataController {
 
     @Autowired
     private CategoryTypeRepo ctRepo;
+
+    @Autowired
+    private CategoryRepo catRepo;
 
     @GetMapping("/studyCourses")
     public ResponseEntity<ListDataDTO<StudyCourseEntity>> getStudyCourses() {
@@ -62,6 +67,14 @@ public class DataController {
         res.setSuccess(true);
         return new ResponseEntity<ListDataDTO<CategoryTypeEntity>>(res, HttpStatus.OK);
 
+    }
+    @GetMapping("/categories")
+    public ResponseEntity<ListDataDTO<CategoryEntity>> getCategories(@RequestParam int studyCourseID) {
+        ListDataDTO<CategoryEntity> res = new ListDataDTO<>();
+        List<CategoryEntity> data = catRepo.findByStudyCourse(studyCourseID);
+        res.setData(data);
+        res.setSuccess(true);
+        return new ResponseEntity<ListDataDTO<CategoryEntity>>(res, HttpStatus.OK);
     }
 
 }
