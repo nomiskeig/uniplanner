@@ -15,10 +15,11 @@ public class ModuleEntity {
     private int studyCourse;
     private String name;
     private String responsible;
+    private String turnus;
     private int ects;
-    @Column(columnDefinition = "TEXT")
+	@Column(columnDefinition = "TEXT")
     private String requirements;
-    @Column(columnDefinition = "TEXT")
+	@Column(columnDefinition = "TEXT")
     private String successControl;
     @Column(columnDefinition = "TEXT")
     private String content;
@@ -26,6 +27,12 @@ public class ModuleEntity {
     private String qualificationGoals;
     @Column(columnDefinition = "TEXT")
     private String recommendations;
+    public String getTurnus() {
+		return turnus;
+	}
+    public void setTurnus(String turnus) {
+		this.turnus = turnus;
+	}
 	public int getModule_id() {
 		return module_id;
 	}
