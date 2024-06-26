@@ -1,21 +1,22 @@
 import { useOutsideClick } from "@/hooks/useOutsideClick";
 import React from "react";
-export interface DropdownProps {
-    options: DropdownOption[]
-    default: DropdownOption,
+export interface DropdownProps<T> {
+    options: DropdownOption<T>[]
+    defaultIndex: number
     title: string
 
 }
-export interface DropdownOption {
+export interface DropdownOption<T> {
     name: string,
-    callback: (optionName: string) => void
+    element: T
+    callback: (option: T) => void
 
 }
 
-export function Dropdown(props: DropdownProps) {
+export function Dropdown<T>(props: DropdownProps<T>) {
     let [expanded, setExpanded] = React.useState(false);
-    let [current, setCurrent] = React.useState(props.default);
-    let ref= useOutsideClick(() => {setExpanded(false)});
+    let [current, setCurrent] = React.useState<DropdownOption<T>>(props.options[props.defaultIndex]);
+    let ref = useOutsideClick(() => { setExpanded(false) });
     return <div className="w-full">
         <div className="">{props.title}</div>
         <div className="w-full">
@@ -25,7 +26,7 @@ export function Dropdown(props: DropdownProps) {
             {expanded ? <div className="absolute border-black border-2 mt-2 rounded">{props.options.map((option, index) => {
                 return <div className="cursor-pointer py-1 px-2 hover:bg-gray-300 border-black bg-gray-200"
                     onClick={() => {
-                        option.callback(option.name);
+                        option.callback(option.element);
                         setCurrent(option);
                         setExpanded(false);
                     }}
