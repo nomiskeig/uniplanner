@@ -28,7 +28,7 @@ export interface Course {
 
 export interface InDepthModule {
     modules: ModuleID[];
-    name: String;
-    info: String;
+    name: string;
+    info: string;
 
 }

@@ -3,9 +3,7 @@
 //import { parseModules } from "../../parsers/infomasterparser.ts"
 import { ColumnFiltersState, FilterFn, createColumnHelper, flexRender, getCoreRowModel, getFilteredRowModel, useReactTable } from "@tanstack/react-table";
 import { InDepthModule, Module } from "../types.ts";
-import modules from "../../parsers/infomasterModuls.json"
-import inDepthModules from "@/parsers/infomasterIndepthModuls.json"
-import React from "react";
+import React, { useEffect } from "react";
 import { Dropdown, DropdownProps } from "@/components/dropdown.tsx";
 import Link from "next/link";
 
@@ -38,8 +36,7 @@ const columns = [
             const idmodules: InDepthModule[] = row.getValue(columnId);
             for (let idmodule of idmodules) {
                 if (idmodule.name == filterValue) {
-                    return true;
-                }
+                    return true; }
             }
             return false;
         }
@@ -54,16 +51,24 @@ const columns = [
 //let modules = parseModules();
 const turnusPossibilities: string[] = [];
 turnusPossibilities.push("anytime")
-for (let module of modules) {
-    if (!turnusPossibilities.includes(module.turnus)) {
-        turnusPossibilities.push(module.turnus)
-    }
-}
+//for (let module of modules) {
+//    if (!turnusPossibilities.includes(module.turnus)) {
+  //      turnusPossibilities.push(module.turnus)
+ //   }
+//}
 
 
+const inDepthModules: InDepthModule[] = [];
 export default function Page() {
-    const [data, _setData] = React.useState(() => [...modules])
+
+    const [modules, setModules] = React.useState<Module[]>(() => [])
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
+
+
+    useEffect(() =>  {
+        fetch('http://localhost:8080/api/v1/data/modules').then((res => res.json())).then((data) => setModules(data.data)).catch(err => console.log(err))
+         
+    })
     const inDepthPickerOptions: DropdownProps = {
         title: "In depth module",
         default: {
@@ -95,7 +100,7 @@ export default function Page() {
 
     const rerender = React.useReducer(() => ({}), {})[1]
     const table = useReactTable({
-        data,
+        data: modules,
         columns,
         getCoreRowModel: getCoreRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
@@ -118,8 +123,14 @@ export default function Page() {
     return <div className="p-5 bg-[#eeeeee] ">
         <div className="mb-10 text-3xl font-bold">Modules overview</div>
         <div className="flex mb-10 gap-6">
+            <div className="flex-auto">
             <Dropdown title={inDepthPickerOptions.title} options={inDepthPickerOptions.options} default={inDepthPickerOptions.default}></Dropdown>
+                <Dropdown title={"Category"} options={[]} default={{name: "abc", callback: () => {}}} ></Dropdown>
+            </div>
+            <div className="flex-auto">
             <Dropdown title={turnusPickerOptions.title} options={turnusPickerOptions.options} default={turnusPickerOptions.default}></Dropdown>
+
+            </div>
         </div>
         <table className="border border-gray-500 border-2 w-full">
             <thead>
