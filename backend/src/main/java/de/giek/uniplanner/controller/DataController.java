@@ -16,10 +16,12 @@ import de.giek.uniplanner.dto.ListDataDTO;
 import de.giek.uniplanner.dto.StudyCourseDTO;
 import de.giek.uniplanner.model.CategoryEntity;
 import de.giek.uniplanner.model.CategoryTypeEntity;
+import de.giek.uniplanner.model.MappingEntity;
 import de.giek.uniplanner.model.ModuleEntity;
 import de.giek.uniplanner.model.StudyCourseEntity;
 import de.giek.uniplanner.repository.CategoryRepo;
 import de.giek.uniplanner.repository.CategoryTypeRepo;
+import de.giek.uniplanner.repository.MappingRepo;
 import de.giek.uniplanner.repository.ModuleRepo;
 import de.giek.uniplanner.repository.StudyCourseRepo;
 
@@ -37,6 +39,9 @@ public class DataController {
 
     @Autowired
     private CategoryRepo catRepo;
+
+    @Autowired
+    private MappingRepo mappingRepo;
 
     @GetMapping("/studyCourses")
     public ResponseEntity<ListDataDTO<StudyCourseEntity>> getStudyCourses() {
@@ -75,6 +80,16 @@ public class DataController {
         res.setData(data);
         res.setSuccess(true);
         return new ResponseEntity<ListDataDTO<CategoryEntity>>(res, HttpStatus.OK);
+    }
+
+    @GetMapping("/mappings")
+    public ResponseEntity<ListDataDTO<MappingEntity>> getMappings(@RequestParam int studyCourseID) {
+        ListDataDTO<MappingEntity> res = new ListDataDTO<>();
+        List<MappingEntity> data = mappingRepo.findByStudyCourse(studyCourseID);
+        res.setData(data);
+        res.setSuccess(true);
+        return new ResponseEntity<ListDataDTO<MappingEntity>>(res, HttpStatus.OK);
+
     }
 
 }
