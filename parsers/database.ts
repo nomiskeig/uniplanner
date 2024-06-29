@@ -42,7 +42,7 @@ export async function createTables() {
     )
     await conn.query('CREATE TABLE categoryType('
         + 'categoryType_id int auto_increment,'
-        + 'name varchar(255) not null,'
+        + 'name varchar(255),'
         + 'studyCourse int,'
         + 'primary key(categoryType_id),'
         + 'foreign key(studyCourse) references studyCourse(studyCourse_id)'
@@ -65,6 +65,7 @@ export async function createTables() {
         + 'module_string_id varchar(255) not null,'
         + 'studyCourse int,'
         + 'name varchar(255),'
+        + 'turnus varchar(255),'
         + 'responsible varchar(255),'
         + 'ects int,'
         + 'requirements text,'
@@ -112,9 +113,9 @@ export async function addModules(modules: Module[], studyCourseID: number) {
     const conn = await getConnection();
 
     const data = modules.map(m => {
-        return [m.id, studyCourseID, m.name, m.responsible, m.ects, m.requirements, m.successControl, m.content, m.qualificationGoals, m.recommendations]
+        return [m.id, studyCourseID, m.name,m.turnus, m.responsible, m.ects, m.requirements, m.successControl, m.content, m.qualificationGoals, m.recommendations]
     })
-    await conn.batch('INSERT INTO module (module_string_id, studyCourse, name, responsible, ects, requirements, successControl, content, qualificationGoals, recommendations) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', data)
+    await conn.batch('INSERT INTO module (module_string_id, studyCourse, name, turnus,responsible, ects, requirements, successControl, content, qualificationGoals, recommendations) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', data)
 
 }
 
