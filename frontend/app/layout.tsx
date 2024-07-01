@@ -30,8 +30,11 @@ export default function RootLayout({
         <html lang="en">
 
             <body className={inter.className}>
+
                 <UserContext.Provider value={{ user: user, setUser: setUser }}>
                     <div>
+                        <Link href="/modules">Modules</Link>
+                        <Link href="/plan">Plan</Link>
                         <Link href="/login">Log in</Link>
                         <button onClick={() => handleLogout()}>Log out</button>
                     </div>
