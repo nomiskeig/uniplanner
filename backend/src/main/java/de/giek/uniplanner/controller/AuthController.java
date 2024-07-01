@@ -16,7 +16,9 @@ import org.springframework.web.bind.annotation.RestController;
 import de.giek.uniplanner.dto.UserAuthDTO;
 import de.giek.uniplanner.dto.LoginResponseDTO;
 import de.giek.uniplanner.dto.SuccessAndMessageDTO;
+import de.giek.uniplanner.model.UserCategoryPickEntity;
 import de.giek.uniplanner.model.UserEntity;
+import de.giek.uniplanner.repository.UserCategoryPickRepo;
 import de.giek.uniplanner.repository.UserRepo;
 import de.giek.uniplanner.security.JwtGenerator;
 
@@ -31,6 +33,8 @@ public class AuthController {
     private JwtGenerator jwtGenerator;
     @Autowired
     private UserRepo userRepo;
+    @Autowired
+    private UserCategoryPickRepo ucpRepo;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -48,7 +52,11 @@ public class AuthController {
         userEntity.setUsername(registerDTO.getUsername());
         userEntity.setPassword(passwordEncoder.encode(registerDTO.getPassword()));
 
-        userRepo.save(userEntity);
+        UserEntity newUser = userRepo.save(userEntity);
+        UserCategoryPickEntity ucpe = new UserCategoryPickEntity();
+        ucpe.setUser(newUser.getUser_id());
+        ucpRepo.save(ucpe);
+
         response.setMessage("User created successfully");
         response.setSuccess(true);
         return new ResponseEntity<SuccessAndMessageDTO>(response, HttpStatus.CREATED);

@@ -38,6 +38,7 @@ public class SecurityConfig {
             authorizeRequests.requestMatchers("/api/v1/users/login").permitAll();
             authorizeRequests.requestMatchers("/api/getSomething").permitAll();
             authorizeRequests.requestMatchers("/api/v1/data/*").permitAll();
+            authorizeRequests.anyRequest().authenticated();
 
         })
             .cors(cors -> cors.configurationSource(myWebsiteConfigurationSource()))
@@ -64,7 +65,7 @@ public class SecurityConfig {
 	CorsConfigurationSource myWebsiteConfigurationSource() {
 		CorsConfiguration configuration = new CorsConfiguration();
 		configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
-		configuration.setAllowedMethods(Arrays.asList("GET","POST", "OPTIONS"));
+		configuration.setAllowedMethods(Arrays.asList("GET","POST", "PUT", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("authorization", "content-type", "x-auth-token"));
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		source.registerCorsConfiguration("/**", configuration);

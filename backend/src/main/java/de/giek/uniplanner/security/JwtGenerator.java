@@ -26,6 +26,7 @@ public class JwtGenerator {
         String username = authentication.getName();
         Date currentDate = new Date();
         Date expiryDate = new Date(currentDate.getTime() + SecurityConstants.JWT_EXPIRATION);
+        System.out.println("expirary date: "  + expiryDate.toString());
 
         System.out.println("key length: " + decodedKey.length);
 
@@ -51,9 +52,10 @@ public class JwtGenerator {
     public boolean validateToken(String token) {
         System.out.println("validating token");
         try {
-            //Jwts.parser().verifyWith(key).build().parseSignedClaims(token);
+             Jwts.parser().verifyWith(key).build().parseSignedClaims(token);
             return true;
         } catch (Exception ex) {
+            System.out.println("error message: " + ex.getMessage());
             throw new AuthenticationCredentialsNotFoundException("JWT token is not valid " + token);
         }
     }

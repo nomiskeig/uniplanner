@@ -1,6 +1,5 @@
 package de.giek.uniplanner.model;
 
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -12,17 +11,27 @@ import jakarta.persistence.Table;
 public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Integer user_id;
 
     private String username;
     private String password;
+    private Integer selectedStudyCourse;
 
-    public Integer getId() {
-        return id;
+
+    public Integer getSelectedStudyCourse() {
+        return selectedStudyCourse;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setSelectedStudyCourse(Integer selectedStudyCourse) {
+        this.selectedStudyCourse = selectedStudyCourse;
+    }
+
+    public Integer getUser_id() {
+        return user_id;
+    }
+
+    public void setUser_id(Integer id) {
+        this.user_id = id;
     }
 
     public String getUsername() {
