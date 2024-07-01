@@ -18,6 +18,14 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     let [user, setUser] = React.useState<User>({ username: "", token: "", isLoggedIn: false })
+    function handleLogout() {
+        setUser({username: "", token: "", isLoggedIn: false});
+        console.log("logging out")
+        document.cookie = "token=;expires=Thu, 01 Jan 1970"
+        document.cookie = "username=;expires=Thu, 01 Jan 1970"
+
+
+    }
     return (
         <html lang="en">
 
@@ -25,8 +33,11 @@ export default function RootLayout({
                 <UserContext.Provider value={{ user: user, setUser: setUser }}>
                     <div>
                         <Link href="/login">Log in</Link>
-                        </div>
-                    {children}</UserContext.Provider></body>
+                        <button onClick={() => handleLogout()}>Log out</button>
+                    </div>
+                    {children}
+                </UserContext.Provider>
+            </body>
         </html>
     );
 }
