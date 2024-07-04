@@ -71,8 +71,8 @@ public class PlanController {
         int userID = userRepo.findByUsername(auth.getName()).orElseThrow().getUser_id();
         UserModulePickEntity umpe = new UserModulePickEntity();
         umpe.setUser(userID);
-        umpe.setModule(pick.getModule_id());
-        umpe.setCategory(pick.getCategory_id());
+        umpe.setModule(pick.getModuleID());
+        umpe.setCategory(pick.getCategoryID());
         umpRepo.save(umpe);
         // TODO: check constraints of the pick
         SuccessAndMessageDTO res = new SuccessAndMessageDTO();
