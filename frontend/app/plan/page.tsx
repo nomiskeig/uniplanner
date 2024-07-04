@@ -6,34 +6,30 @@ import { Dropdown, DropdownOption } from "@/components/Dropdown";
 import { UserContext } from "@/components/UserContext"
 import { useRouter } from "next/navigation";
 import React, { useContext, useEffect } from "react"
-import { Category, CategoryType, PickedCategories } from "../types";
+import { Category, CategoryType, Module, PickedCategories, PickedModule } from "../types";
+import { useTranslation } from "react-i18next";
+import { useGetPublicData } from "@/hooks/useGetPublicData";
+import { useGetPickedCategories } from "@/hooks/useGetPickedCategories";
+import { useGetPickedModules } from "@/hooks/useGetPickedModules";
 
 
 export default function Page() {
 
     const userContext = useContext(UserContext)
+    const {categories, categoryTypes, modules, isLoading, error } = useGetPublicData(1);
+    const {pickedCategories, setPickedCategories, pickedCategoriesError, isPickedCategoriesLoading} = useGetPickedCategories(userContext.user.token);
+    const {pickedModules, pickedModulesError, isPickedModulesLoading} = useGetPickedModules(userContext.user.token);
     const router = useRouter();
-    const [studyCourse, setStudyCourse] = React.useState<number>(1);
-    const [categories, setCategories] = React.useState<Category[]>(() => [])
-    const [categoryTypes, setCategoryTypes] = React.useState<CategoryType[]>(() => [])
-    const [pickedCategories, setPickedCategories] = React.useState<null | PickedCategories>(null)
+    const { i18n, t } = useTranslation();
     useEffect(() => {
         // redirect user to login page if the user is not logged in 
         if (!userContext.user.isLoggedIn) {
             router.push("/login")
             return;
         }
-        fetch(`http://localhost:8080/api/v1/data/categories?studyCourseID=${studyCourse}`).then((res => res.json())).then((data) => setCategories(data.data)).catch(err => console.log(err))
-        fetch(`http://localhost:8080/api/v1/data/categoryTypes?studyCourseID=${studyCourse}`).then((res => res.json())).then((data) => setCategoryTypes(data.data)).catch(err => console.log(err))
-        fetch('http://localhost:8080/api/v1/plan/getCategoryPicks', {
-            method: 'GET', headers: {
-                'Authorization': "Bearer " + userContext.user.token
-            }
-        }).then((res) => res.json()).then(data => setPickedCategories(data))
 
     }, [])
-    const loading = categories.length == 0 || categoryTypes.length == 0 || pickedCategories == null
-    if (loading) {
+    if (isLoading || isPickedModulesLoading || pickedCategories == null) {
         return <div>Loading</div>
     }
 
@@ -45,10 +41,10 @@ export default function Page() {
             element: cat,
             callback: (cat: Category) => {
                 let newCategories = {
-                        "indepth1": cat.category_id,
-                        "indepth2": pickedCategories.indepth2,
-                        "supplementary": pickedCategories.supplementary
-                    }
+                    "indepth1": cat.category_id,
+                    "indepth2": pickedCategories.indepth2,
+                    "supplementary": pickedCategories.supplementary
+                }
                 fetch('http://localhost:8080/api/v1/plan/updateCategoryPicks', {
                     method: 'PUT',
                     headers: {
@@ -59,10 +55,12 @@ export default function Page() {
                     body: JSON.stringify(newCategories)
 
                 }
-                ).then(res => {if(res.ok) {
+                ).then(res => {
+                    if (res.ok) {
                         setPickedCategories(newCategories)
 
-                }})
+                    }
+                })
             }
 
 
@@ -74,10 +72,10 @@ export default function Page() {
             element: cat,
             callback: (cat: Category) => {
                 let newCategories = {
-                        "indepth1": pickedCategories.indepth1,
-                        "indepth2": cat.category_id,
-                        "supplementary": pickedCategories.supplementary
-                    }
+                    "indepth1": pickedCategories.indepth1,
+                    "indepth2": cat.category_id,
+                    "supplementary": pickedCategories.supplementary
+                }
                 fetch('http://localhost:8080/api/v1/plan/updateCategoryPicks', {
                     method: 'PUT',
                     headers: {
@@ -88,10 +86,12 @@ export default function Page() {
                     body: JSON.stringify(newCategories)
 
                 }
-                ).then(res => {if(res.ok) {
+                ).then(res => {
+                    if (res.ok) {
                         setPickedCategories(newCategories)
 
-                }})
+                    }
+                })
             }
 
 
@@ -103,10 +103,10 @@ export default function Page() {
             element: cat,
             callback: (cat: Category) => {
                 let newCategories = {
-                        "indepth1": pickedCategories.indepth1,
-                        "indepth2": pickedCategories.indepth2,
-                        "supplementary": cat.category_id 
-                    }
+                    "indepth1": pickedCategories.indepth1,
+                    "indepth2": pickedCategories.indepth2,
+                    "supplementary": cat.category_id
+                }
                 fetch('http://localhost:8080/api/v1/plan/updateCategoryPicks', {
                     method: 'PUT',
                     headers: {
@@ -117,35 +117,48 @@ export default function Page() {
                     body: JSON.stringify(newCategories)
 
                 }
-                ).then(res => {if(res.ok) {
+                ).then(res => {
+                    if (res.ok) {
                         setPickedCategories(newCategories)
 
-                }})
+                    }
+                })
             }
 
 
         }
     })
-    console.log(supplementaryPickerOptions)
-    if (pickedCategories != null) {
+    if (pickedModules == null) {
+        return <div>Loading</div>
     }
+    const pickedInDepth1Modules = modules.filter(m => pickedModules.find(pm => (pm.moduleID == m.module_id && pm.categoryID == pickedCategories.indepth1) ? true : false));
+    const pickedInDepth2Modules = modules.filter(m => pickedModules.find(pm => (pm.moduleID == m.module_id && pm.categoryID == pickedCategories.indepth2) ? true : false));
+    const inDepth1Cat = categories.find(cat => cat.category_id == pickedCategories.indepth1)!
+    const inDepth2Cat = categories.find(cat => cat.category_id == pickedCategories.indepth2)!
+    const inDepth1Default = indepth1PickerOptions.findIndex(option => option.element.category_id == pickedCategories.indepth1)
+    const inDepth2Default = indepth1PickerOptions.findIndex(option => option.element.category_id == pickedCategories.indepth2)
+    const supplementaryDefault = supplementaryPickerOptions.findIndex(option => option.element.category_id == pickedCategories.supplementary)
     return <div>
         <div>Plan</div>
-            <div>
-                <div>
-                    <Dropdown title="Picked in depth module 1" options={indepth1PickerOptions} defaultIndex={indepth1PickerOptions.findIndex(option => option.element.category_id == pickedCategories.indepth1)} ></Dropdown>
-                    <Dropdown title="Picked in depth module 2" options={indepth2PickerOptions} defaultIndex={indepth2PickerOptions.findIndex(option => option.element.category_id == pickedCategories.indepth2)} ></Dropdown>
-
-                    <Dropdown title="Picked in supplementary module" options={supplementaryPickerOptions} defaultIndex={supplementaryPickerOptions.findIndex(option => option.element.category_id == pickedCategories.supplementary)} ></Dropdown>
-                </div>
-                <div>
-
-                    <CategoryContainer name={"In depth module 1"} category={categories.find(cat => cat.category_id == pickedCategories.indepth1)!}
-                     modules={[]}></CategoryContainer>
-                    <CategoryContainer name={"In depth module 2"} category={categories.find(cat => cat.category_id == pickedCategories.indepth2)!}
-                     modules={[]}></CategoryContainer>
-                </div>
+        <div>
+            <div className="p-2">
+                <Dropdown title={`${t("pickedIn")} ${t("inDepthModule")} 1`} options={indepth1PickerOptions} defaultIndex={inDepth1Default} ></Dropdown>
+                <Dropdown title={`${t("pickedIn")} ${t("inDepthModule")} 2`} options={indepth2PickerOptions} defaultIndex={inDepth2Default} ></Dropdown>
+                <Dropdown title={`${t("pickedIn")} ${t("supplementaryModule")}`} options={supplementaryPickerOptions} defaultIndex={supplementaryDefault} ></Dropdown>
             </div>
+            <div className="grid grid-cols-2">
+                <CategoryContainer
+                    name={`${t("inDepthModule")} 1`}
+                    category={inDepth1Cat}
+                    modules={pickedInDepth1Modules}
+                ></CategoryContainer>
+                <CategoryContainer
+                    name={`${t("inDepthModule")} 2`}
+                    category={inDepth2Cat}
+                    modules={pickedInDepth2Modules}
+                ></CategoryContainer>
+            </div>
+        </div>
     </div>
 
 
