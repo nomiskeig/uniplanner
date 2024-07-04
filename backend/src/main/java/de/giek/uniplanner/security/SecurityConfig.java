@@ -38,6 +38,11 @@ public class SecurityConfig {
             authorizeRequests.requestMatchers("/api/v1/users/login").permitAll();
             authorizeRequests.requestMatchers("/api/getSomething").permitAll();
             authorizeRequests.requestMatchers("/api/v1/data/*").permitAll();
+            authorizeRequests.requestMatchers("/api-docs/*").permitAll();
+            authorizeRequests.requestMatchers("/api-docs").permitAll();
+            authorizeRequests.requestMatchers("/api-docs-ui").permitAll();
+            authorizeRequests.requestMatchers("/swagger-ui/*").permitAll();
+            authorizeRequests.requestMatchers("/api-swagger-config").permitAll();
             authorizeRequests.anyRequest().authenticated();
 
         })
