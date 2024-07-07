@@ -9,6 +9,7 @@ import Link from "next/link";
 import { UserContext } from "@/components/UserContext.ts";
 import { ButtonMenu, ButtonMenuOption } from "@/components/ButtonMenu.tsx";
 import { useGetPickedModules } from "@/hooks/useGetPickedModules.tsx";
+import { useLogin } from "@/hooks/useLogin.tsx";
 
 
 
@@ -24,10 +25,10 @@ export default function Page() {
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
     const [globalMappings, setGlobalMappings] = React.useState<ModuleToCategoryMapping[]>([]);
     const [currentCategoryType, setCurrentCategoryType] = React.useState<CategoryType>({ name: "All categories", categoryType_id: 0 });
-    const userContext = useContext(UserContext)
     const [pickedCategories, setPickedCategories] = useState<PickedCategories | {}>({})
-    const { pickedModules } = useGetPickedModules(userContext.user.token);
     const columnHelper = createColumnHelper<Module>();
+    const {isLoggedIn, user} = useLogin("/modules", false);
+    const { pickedModules } = useGetPickedModules(user.token);
     const columns = [
 
         columnHelper.accessor('name', {
@@ -91,7 +92,7 @@ export default function Page() {
                     fetch("http://localhost:8080/api/v1/plan/removeModulePick", {
                         method: "POST",
                         headers: {
-                            'Authorization': "Bearer " + userContext.user.token,
+                            'Authorization': "Bearer " + user.token,
                             'Content-Type': 'application/json',
                         },
                         mode: 'cors',
@@ -115,7 +116,7 @@ export default function Page() {
                     fetch("http://localhost:8080/api/v1/plan/addModulePick", {
                         method: "POST",
                         headers: {
-                            'Authorization': "Bearer " + userContext.user.token,
+                            'Authorization': "Bearer " + user.token,
                             'Content-Type': 'application/json',
                         },
                         mode: 'cors',
@@ -136,10 +137,10 @@ export default function Page() {
         fetch(`http://localhost:8080/api/v1/data/categories?studyCourseID=${studyCourse}`).then((res => res.json())).then((data) => setCategories(data.data)).catch(err => console.log(err))
         fetch(`http://localhost:8080/api/v1/data/categoryTypes?studyCourseID=${studyCourse}`).then((res => res.json())).then((data) => setCategoryTypes(data.data)).catch(err => console.log(err))
         fetch(`http://localhost:8080/api/v1/data/mappings?studyCourseID=${studyCourse}`).then((res => res.json())).then((data) => setGlobalMappings(data.data)).catch(err => console.log(err))
-        if (userContext.user.isLoggedIn) {
+        if (user.isLoggedIn) {
             fetch('http://localhost:8080/api/v1/plan/getCategoryPicks', {
                 method: 'GET', headers: {
-                    'Authorization': "Bearer " + userContext.user.token
+                    'Authorization': "Bearer " + user.token
                 }
             }).then((res) => res.json()).then(data => setPickedCategories(data))
 
@@ -248,7 +249,7 @@ export default function Page() {
             columnVisibility: {
                 indepthmodule: false,
                 id: false,
-                actions: userContext.user.isLoggedIn
+                actions: user.isLoggedIn
 
             }
 

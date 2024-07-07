@@ -20,6 +20,11 @@ export interface PickedCategories {
     supplementary: number
     
 }
+
+export interface PickedModule {
+    moduleID: number,
+    categoryID: number
+}
 export interface User {
     token: string,
     username: string,
@@ -62,8 +67,6 @@ export interface InDepthModule {
 export interface ModuleToCategoryMapping {
     category: number,
     module: number,
-
-
 }
 
 export interface Turnus {

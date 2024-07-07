@@ -21,7 +21,7 @@ export const useGetPickedCategories = (token: string) => {
         }).then((res) => res.json())
         .then(data => {setPickedCategories(data); setIsLoading(false)})
         .catch(err => setError(err.message))
-    }, [])
+    }, [token])
 
     return {pickedCategoriesError: error, pickedCategories, setPickedCategories, isPickedCategoriesLoading: isLoading}
 

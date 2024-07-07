@@ -17,17 +17,6 @@ export default function Page() {
     const [passwordInput, setPasswordInput] = React.useState<string>("");
     const userContext = useContext(UserContext)
     const router = useRouter();
-    useEffect(() => {
-        console.log(document.cookie)
-        if (document.cookie.includes("token")) {
-            let token = document.cookie.match(/token=(.*);/)![1]
-            let username = document.cookie.match(/username=(.*)/)![1]
-            
-            userContext.setUser({username: username, token: token, isLoggedIn: true})
-            router.push("/plan")
-        }
-
-    },[])
     function handleLogin() {
         fetch("http://localhost:8080/api/v1/users/login", {
             headers: {
@@ -49,7 +38,7 @@ export default function Page() {
 
                 return res.json()
             })
-            .then(data => { writeToCookie(data.token, usernameInput), userContext.setUser({ token: data.token, username: usernameInput, isLoggedIn: true }); console.log("logged in "); console.log(data)})
+            .then(data => { writeToCookie(data.token, usernameInput), userContext.setUser({ token: data.token, username: usernameInput, isLoggedIn: true }); router.push("/modules")})
             .catch(err => console.log(err.message))
 
 

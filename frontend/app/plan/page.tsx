@@ -3,7 +3,6 @@
 
 import { CategoryContainer } from "@/components/CategoryContainer";
 import { Dropdown, DropdownOption } from "@/components/Dropdown";
-import { UserContext } from "@/components/UserContext"
 import { useRouter } from "next/navigation";
 import React, { useContext, useEffect } from "react"
 import { Category, CategoryType, Module, PickedCategories, PickedModule } from "../types";
@@ -11,24 +10,16 @@ import { useTranslation } from "react-i18next";
 import { useGetPublicData } from "@/hooks/useGetPublicData";
 import { useGetPickedCategories } from "@/hooks/useGetPickedCategories";
 import { useGetPickedModules } from "@/hooks/useGetPickedModules";
+import { useLogin } from "@/hooks/useLogin";
 
 
 export default function Page() {
 
-    const userContext = useContext(UserContext)
     const {categories, categoryTypes, modules, isLoading, error } = useGetPublicData(1);
-    const {pickedCategories, setPickedCategories, pickedCategoriesError, isPickedCategoriesLoading} = useGetPickedCategories(userContext.user.token);
-    const {pickedModules, pickedModulesError, isPickedModulesLoading} = useGetPickedModules(userContext.user.token);
-    const router = useRouter();
+    const {user, isLoggedIn} = useLogin("/plan", true);
+    const {pickedModules, pickedModulesError, isPickedModulesLoading} = useGetPickedModules(user.token);
+    const {pickedCategories, setPickedCategories, pickedCategoriesError, isPickedCategoriesLoading} = useGetPickedCategories(user.token);
     const { i18n, t } = useTranslation();
-    useEffect(() => {
-        // redirect user to login page if the user is not logged in 
-        if (!userContext.user.isLoggedIn) {
-            router.push("/login")
-            return;
-        }
-
-    }, [])
     if (isLoading || isPickedModulesLoading || pickedCategories == null) {
         return <div>Loading</div>
     }
@@ -49,7 +40,7 @@ export default function Page() {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': 'Bearer ' + userContext.user.token
+                        'Authorization': 'Bearer ' + user.token
                     },
                     mode: 'cors',
                     body: JSON.stringify(newCategories)
@@ -80,7 +71,7 @@ export default function Page() {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': 'Bearer ' + userContext.user.token
+                        'Authorization': 'Bearer ' + user.token
                     },
                     mode: 'cors',
                     body: JSON.stringify(newCategories)
@@ -111,7 +102,7 @@ export default function Page() {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': 'Bearer ' + userContext.user.token
+                        'Authorization': 'Bearer ' + user.token
                     },
                     mode: 'cors',
                     body: JSON.stringify(newCategories)
