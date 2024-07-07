@@ -96,4 +96,19 @@ public class PlanController {
         return new ResponseEntity<ListDataDTO<UserModulePickEntity>>(res, HttpStatus.OK);
 
     }
+
+    @PostMapping("/removeModulePick")
+    public ResponseEntity removeModulePick(Authentication auth, @RequestBody UserPickDTO pickToRemove) {
+        Optional<UserEntity> user = userRepo.findByUsername(auth.getName());
+        if (!user.isPresent()) {
+            return new ResponseEntity<String>("Cannot find user with username " + auth.getName(), HttpStatus.NOT_FOUND);
+        }
+        int userID = user.get().getUser_id();
+        UserModulePickEntity umpe = umpRepo.findByUserAndCategoryAndModule(userID,pickToRemove.getCategoryID(), pickToRemove.getModuleID());
+        umpRepo.delete(umpe);
+        SuccessAndMessageDTO res = new SuccessAndMessageDTO();
+        res.setMessage("Success");
+        res.setSuccess(true);
+        return new ResponseEntity<SuccessAndMessageDTO>(res, HttpStatus.OK);
+    }
 }
