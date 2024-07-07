@@ -2,12 +2,13 @@
 
 //import { parseModules } from "../../parsers/infomasterparser.ts"
 import { ColumnFiltersState, FilterFn, createColumnHelper, flexRender, getCoreRowModel, getFilteredRowModel, useReactTable } from "@tanstack/react-table";
-import { Category, CategoryType, InDepthModule, Module, ModuleToCategoryMapping, PickedCategories, Turnus } from "../types.ts";
+import { Category, CategoryType, InDepthModule, Module, ModuleToCategoryMapping, PickedCategories, PickedModule, Turnus } from "../types.ts";
 import React, { useContext, useEffect, useState } from "react";
 import { Dropdown, DropdownProps } from "@/components/Dropdown.tsx";
 import Link from "next/link";
 import { UserContext } from "@/components/UserContext.ts";
 import { ButtonMenu, ButtonMenuOption } from "@/components/ButtonMenu.tsx";
+import { useGetPickedModules } from "@/hooks/useGetPickedModules.tsx";
 
 
 
@@ -24,7 +25,8 @@ export default function Page() {
     const [globalMappings, setGlobalMappings] = React.useState<ModuleToCategoryMapping[]>([]);
     const [currentCategoryType, setCurrentCategoryType] = React.useState<CategoryType>({ name: "All categories", categoryType_id: 0 });
     const userContext = useContext(UserContext)
-    const [pickedCategories, setPickedCategories] = useState<PickedCategories | null>(null)
+    const [pickedCategories, setPickedCategories] = useState<PickedCategories | {}>({})
+    const { pickedModules } = useGetPickedModules(userContext.user.token);
     const columnHelper = createColumnHelper<Module>();
     const columns = [
 
@@ -71,8 +73,60 @@ export default function Page() {
         // filter out the indepth modules and the supplementary
         let catTypesToFilter = categoryTypes.filter(catType => (catType.name == 'inDepth' || catType.name == 'supplementary')).map(catType => catType.categoryType_id);
 
-       possibleCategories =   possibleCategories.filter(cat => !catTypesToFilter.includes(cat.type) || Object.values(pickedCategories!).includes(cat.category_id));
-        return possibleCategories.map((cat) => { return { text: "Add to " + cat.name, action: () => { } } })
+        possibleCategories = possibleCategories.filter(cat => !catTypesToFilter.includes(cat.type) || Object.values(pickedCategories).includes(cat.category_id));
+        // check if the one of the possible categories is already picked, cause it is not possible to add the module to another category
+        // if this is the case, return 
+        let categoryOfModule: Category | undefined;
+        const isAlreadyPicked = pickedModules.filter(pm => {
+            if (pm.moduleID != module.module_id) {
+                return false;
+            }
+
+            categoryOfModule = possibleCategories.find(pc => pc.category_id == pm.categoryID)
+            return categoryOfModule != undefined
+        }
+        ).length > 0 ? true : false
+        if (isAlreadyPicked) {
+            return [{ text: "Remove from " + categoryOfModule!.name, action: () => {
+                    fetch("http://localhost:8080/api/v1/plan/removeModulePick", {
+                        method: "POST",
+                        headers: {
+                            'Authorization': "Bearer " + userContext.user.token,
+                            'Content-Type': 'application/json',
+                        },
+                        mode: 'cors',
+                        body: JSON.stringify({
+                            "categoryID": categoryOfModule!.category_id,
+                            "moduleID": module.module_id
+                        }),
+                    })
+            } }]
+
+
+        }
+
+        return possibleCategories.map((cat) => {
+            if (pickedModules!.find(pm => pm.categoryID == cat.category_id && pm.moduleID == module.module_id)) {
+                return { text: "Remove from " + cat.name, action: () => { } }
+
+            }
+            return {
+                text: "Add to " + cat.name, action: () => {
+                    fetch("http://localhost:8080/api/v1/plan/addModulePick", {
+                        method: "POST",
+                        headers: {
+                            'Authorization': "Bearer " + userContext.user.token,
+                            'Content-Type': 'application/json',
+                        },
+                        mode: 'cors',
+                        body: JSON.stringify({
+                            "categoryID": cat.category_id,
+                            "moduleID": module.module_id
+                        }),
+                    })
+                }
+            }
+        })
 
     }
 
@@ -83,13 +137,11 @@ export default function Page() {
         fetch(`http://localhost:8080/api/v1/data/categoryTypes?studyCourseID=${studyCourse}`).then((res => res.json())).then((data) => setCategoryTypes(data.data)).catch(err => console.log(err))
         fetch(`http://localhost:8080/api/v1/data/mappings?studyCourseID=${studyCourse}`).then((res => res.json())).then((data) => setGlobalMappings(data.data)).catch(err => console.log(err))
         if (userContext.user.isLoggedIn) {
-
             fetch('http://localhost:8080/api/v1/plan/getCategoryPicks', {
                 method: 'GET', headers: {
                     'Authorization': "Bearer " + userContext.user.token
                 }
             }).then((res) => res.json()).then(data => setPickedCategories(data))
-
 
         }
 
@@ -209,6 +261,19 @@ export default function Page() {
     const showInDepthPicker = currentCategoryType.name == "inDepth"
     const showSupplementaryPicker = currentCategoryType.name == "supplementary"
 
+    function getRowColor(index: number, moduleID: number) {
+        if (pickedModules && pickedModules.find(pm => pm.moduleID == moduleID)) {
+            return "bg-green-400"
+
+        }
+        if (index % 2 == 0) {
+            return "bg-gray-300"
+
+        }
+        return "bg-gray-200"
+
+    }
+
 
 
     return <div className="p-5 bg-[#eeeeee] ">
@@ -246,7 +311,7 @@ export default function Page() {
                 {table.getRowModel().rows.map((row, index) => (
                     <tr key={row.id}>
                         {row.getVisibleCells().map(cell => (
-                            <td className={`${index % 2 == 0 ? "bg-gray-300" : "bg-gray-200"} pl-2 border-l border-gray-500`} key={cell.id}>
+                            <td className={`${getRowColor(index, row.getValue("id"))} pl-2 border-l border-gray-500`} key={cell.id}>
                                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
                             </td>
                         ))}
