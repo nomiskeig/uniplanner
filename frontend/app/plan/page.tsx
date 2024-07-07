@@ -124,8 +124,10 @@ export default function Page() {
     }
     const pickedInDepth1Modules = modules.filter(m => pickedModules.find(pm => (pm.moduleID == m.module_id && pm.categoryID == pickedCategories.indepth1) ? true : false));
     const pickedInDepth2Modules = modules.filter(m => pickedModules.find(pm => (pm.moduleID == m.module_id && pm.categoryID == pickedCategories.indepth2) ? true : false));
+    const pickedSupplementaryModules = modules.filter(m => pickedModules.find(pm => (pm.moduleID == m.module_id && pm.categoryID == pickedCategories.supplementary) ? true : false));
     const inDepth1Cat = categories.find(cat => cat.category_id == pickedCategories.indepth1)!
     const inDepth2Cat = categories.find(cat => cat.category_id == pickedCategories.indepth2)!
+    const supplementaryCat = categories.find(cat => cat.category_id == pickedCategories.supplementary)!
     const inDepth1Default = indepth1PickerOptions.findIndex(option => option.element.category_id == pickedCategories.indepth1)
     const inDepth2Default = indepth1PickerOptions.findIndex(option => option.element.category_id == pickedCategories.indepth2)
     const supplementaryDefault = supplementaryPickerOptions.findIndex(option => option.element.category_id == pickedCategories.supplementary)
@@ -142,6 +144,18 @@ export default function Page() {
                     name={`${t("inDepthModule")} 1`}
                     category={inDepth1Cat}
                     modules={pickedInDepth1Modules}
+                ></CategoryContainer>
+                <CategoryContainer
+                    name={`${t("inDepthModule")} 2`}
+                    category={inDepth2Cat}
+                    modules={pickedInDepth2Modules}
+                ></CategoryContainer>
+            </div>
+            <div className="grid grid-cols-2">
+                <CategoryContainer
+                    name={`${t("supplementaryModule")}`}
+                    category={supplementaryCat}
+                    modules={pickedSupplementaryModules}
                 ></CategoryContainer>
                 <CategoryContainer
                     name={`${t("inDepthModule")} 2`}

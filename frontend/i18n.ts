@@ -12,7 +12,8 @@ i18n.use(initReactI18next).init({
             translation: {
                 inDepthModule: "in depth module",
                 pickedIn: "Picked in",
-                supplementaryModule: "supplementary module"
+                supplementaryModule: "supplementary module",
+                pickArea: "Pick area"
 
             }
         },
@@ -20,7 +21,8 @@ i18n.use(initReactI18next).init({
             translation: {
                 inDepthModule: "Vertiefungsfach",
                 pickedIn: "Gewählt in",
-                supplementaryModule: "Wahlbereich"
+                supplementaryModule: "Wahlbereich",
+                pickArea: "Wahlbereich"
             }
         }
 
