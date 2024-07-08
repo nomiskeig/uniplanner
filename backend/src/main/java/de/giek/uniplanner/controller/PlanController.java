@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import de.giek.uniplanner.dto.CategoryPickDTO;
 import de.giek.uniplanner.dto.ListDataDTO;
 import de.giek.uniplanner.dto.SuccessAndMessageDTO;
+import de.giek.uniplanner.dto.UserCategoryPickDTO;
 import de.giek.uniplanner.dto.UserPickDTO;
 import de.giek.uniplanner.model.UserCategoryPickEntity;
 import de.giek.uniplanner.model.UserEntity;
@@ -41,10 +42,10 @@ public class PlanController {
         System.out.println("called update userpicks");
         System.out.println("user: " + auth.getName());
         int userID = userRepo.findByUsername(auth.getName()).orElseThrow().getUser_id();
-        UserCategoryPickEntity ucpe = ucpRepo.findByUser(userID);
-        ucpe.setIndepth1(picks.getIndepth1());
-        ucpe.setIndepth2(picks.getIndepth2());
-        ucpe.setSupplementary(picks.getSupplementary());
+        UserCategoryPickEntity ucpe = ucpRepo.findByUserID(userID);
+        //ucpe.setIndepth1(picks.getIndepth1());
+        //ucpe.setIndepth2(picks.getIndepth2());
+        //ucpe.setSupplementary(picks.getSupplementary());
         ucpRepo.save(ucpe);
 
         SuccessAndMessageDTO res = new SuccessAndMessageDTO();
@@ -61,8 +62,9 @@ public class PlanController {
             return new ResponseEntity<String>("Cannot find user with username " + auth.getName(), HttpStatus.NOT_FOUND);
         }
 
-        UserCategoryPickEntity ucpe = ucpRepo.findByUser(user.get().getUser_id());
-        return new ResponseEntity<UserCategoryPickEntity>(ucpe, HttpStatus.OK);
+        UserCategoryPickEntity ucpe = ucpRepo.findByUserID(user.get().getUser_id());
+        UserCategoryPickDTO dto = new UserCategoryPickDTO(ucpe);
+        return new ResponseEntity<UserCategoryPickDTO>(dto, HttpStatus.OK);
 
     }
 

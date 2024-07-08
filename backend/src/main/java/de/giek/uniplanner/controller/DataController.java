@@ -12,7 +12,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import de.giek.uniplanner.dto.CategoryDTO;
+import de.giek.uniplanner.dto.CategoryTypeDTO;
 import de.giek.uniplanner.dto.ListDataDTO;
+import de.giek.uniplanner.dto.ModuleDTO;
 import de.giek.uniplanner.dto.StudyCourseDTO;
 import de.giek.uniplanner.model.CategoryEntity;
 import de.giek.uniplanner.model.CategoryTypeEntity;
@@ -55,31 +58,46 @@ public class DataController {
     }
 
     @GetMapping("/modules")
-    public ResponseEntity<ListDataDTO<ModuleEntity>> getModules(@RequestParam int studyCourseID) {
-        ListDataDTO<ModuleEntity> res = new ListDataDTO<>();
+    public ResponseEntity<ListDataDTO<ModuleDTO>> getModules(@RequestParam int studyCourseID) {
+        ListDataDTO<ModuleDTO> res = new ListDataDTO<>();
         List<ModuleEntity> data = moduleRepo.findByStudyCourse(studyCourseID);
-        res.setData(data);
+        List<ModuleDTO> dtos = new ArrayList<>();
+        for (ModuleEntity me : data) {
+            dtos.add(new ModuleDTO(me, true));
+        }
+        res.setData(dtos);
         res.setSuccess(true);
-        return new ResponseEntity<ListDataDTO<ModuleEntity>>(res, HttpStatus.OK);
+
+        return new ResponseEntity<ListDataDTO<ModuleDTO>>(res, HttpStatus.OK);
 
     }
 
     @GetMapping("/categoryTypes")
-    public ResponseEntity<ListDataDTO<CategoryTypeEntity>> getCategoryTypes(@RequestParam int studyCourseID) {
-        ListDataDTO<CategoryTypeEntity> res = new ListDataDTO<>();
+    public ResponseEntity<ListDataDTO<CategoryTypeDTO>> getCategoryTypes(@RequestParam int studyCourseID) {
+        ListDataDTO<CategoryTypeDTO> res = new ListDataDTO<>();
         List<CategoryTypeEntity> data = ctRepo.findByStudyCourse(studyCourseID);
-        res.setData(data);
+        List<CategoryTypeDTO> dtos = new ArrayList<>();
+        for (CategoryTypeEntity cte : data) {
+            dtos.add(new CategoryTypeDTO(cte, true));
+        }
+
+        res.setData(dtos);
         res.setSuccess(true);
-        return new ResponseEntity<ListDataDTO<CategoryTypeEntity>>(res, HttpStatus.OK);
+        return new ResponseEntity<ListDataDTO<CategoryTypeDTO>>(res, HttpStatus.OK);
 
     }
+
     @GetMapping("/categories")
-    public ResponseEntity<ListDataDTO<CategoryEntity>> getCategories(@RequestParam int studyCourseID) {
-        ListDataDTO<CategoryEntity> res = new ListDataDTO<>();
+    public ResponseEntity<ListDataDTO<CategoryDTO>> getCategories(@RequestParam int studyCourseID) {
+        ListDataDTO<CategoryDTO> res = new ListDataDTO<>();
         List<CategoryEntity> data = catRepo.findByStudyCourse(studyCourseID);
-        res.setData(data);
+        List<CategoryDTO> dtos = new ArrayList<>();
+        for (CategoryEntity ce : data) {
+            dtos.add(new CategoryDTO(ce, true, true));
+        }
+        res.setData(dtos);
         res.setSuccess(true);
-        return new ResponseEntity<ListDataDTO<CategoryEntity>>(res, HttpStatus.OK);
+        return new ResponseEntity<ListDataDTO<CategoryDTO>>(res, HttpStatus.OK);
     }
 
     @GetMapping("/mappings")

@@ -1,19 +1,35 @@
 package de.giek.uniplanner.model;
 
+import java.io.Serializable;
+import java.util.Set;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "categoryType")
-public class CategoryTypeEntity {
+public class CategoryTypeEntity implements Serializable{
     @Id
     private int categoryType_id;
     private String name;
     private int studyCourse;
-    @JsonIgnore
+
+
+    @OneToMany(mappedBy="type")
+    private Set<CategoryEntity> categories;
+
+
+    public Set<CategoryEntity> getCategories() {
+		return categories;
+	}
+	public void setCategories(Set<CategoryEntity> categories) {
+		this.categories = categories;
+	}
+	@JsonIgnore
 	public int getStudyCourse() {
 		return studyCourse;
 	}

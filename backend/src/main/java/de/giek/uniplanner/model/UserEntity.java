@@ -1,9 +1,11 @@
 package de.giek.uniplanner.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -16,6 +18,8 @@ public class UserEntity {
     private String username;
     private String password;
     private Integer selectedStudyCourse;
+    @OneToOne(mappedBy = "user")
+    private UserCategoryPickEntity userCategoryPick;
 
 
     public Integer getSelectedStudyCourse() {

@@ -52,11 +52,7 @@ public class AuthController {
         userEntity.setUsername(registerDTO.getUsername());
         userEntity.setPassword(passwordEncoder.encode(registerDTO.getPassword()));
 
-        UserEntity newUser = userRepo.save(userEntity);
-        UserCategoryPickEntity ucpe = new UserCategoryPickEntity();
-        ucpe.setUser(newUser.getUser_id());
-        ucpRepo.save(ucpe);
-
+        userRepo.save(userEntity);
         response.setMessage("User created successfully");
         response.setSuccess(true);
         return new ResponseEntity<SuccessAndMessageDTO>(response, HttpStatus.CREATED);
