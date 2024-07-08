@@ -1,5 +1,6 @@
 package de.giek.uniplanner.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,6 +19,7 @@ import de.giek.uniplanner.dto.CategoryPickDTO;
 import de.giek.uniplanner.dto.ListDataDTO;
 import de.giek.uniplanner.dto.SuccessAndMessageDTO;
 import de.giek.uniplanner.dto.UserCategoryPickDTO;
+import de.giek.uniplanner.dto.UserModulePickDTO;
 import de.giek.uniplanner.dto.UserPickDTO;
 import de.giek.uniplanner.model.UserCategoryPickEntity;
 import de.giek.uniplanner.model.UserEntity;
@@ -72,10 +74,11 @@ public class PlanController {
     public ResponseEntity<SuccessAndMessageDTO> addModulePick(Authentication auth, @RequestBody UserPickDTO pick) {
         int userID = userRepo.findByUsername(auth.getName()).orElseThrow().getUser_id();
         UserModulePickEntity umpe = new UserModulePickEntity();
-        umpe.setUser(userID);
-        umpe.setModule(pick.getModuleID());
-        umpe.setCategory(pick.getCategoryID());
+       // umpe.setUser(userID);
+       // umpe.setModule(pick.getModuleID());
+       // umpe.setCategory(pick.getCategoryID());
         umpRepo.save(umpe);
+        //umpRepo.getReferenceByIdk
         // TODO: check constraints of the pick
         SuccessAndMessageDTO res = new SuccessAndMessageDTO();
         res.setMessage("Success");
@@ -89,13 +92,16 @@ public class PlanController {
         if (!user.isPresent()) {
             return new ResponseEntity<String>("Cannot find user with username " + auth.getName(), HttpStatus.NOT_FOUND);
         }
-        int userID = user.get().getUser_id();
 
-        List<UserModulePickEntity> umpes = umpRepo.findByUser(userID);
-        ListDataDTO<UserModulePickEntity> res = new ListDataDTO<>();
-        res.setData(umpes);
+        List<UserModulePickEntity> umpes = umpRepo.findByUser(user.get());
+        ListDataDTO<UserModulePickDTO> res = new ListDataDTO<>();
+        List<UserModulePickDTO> dtos = new ArrayList<>();
+        for (UserModulePickEntity umpe : umpes) {
+            dtos.add(new UserModulePickDTO(umpe));
+        }
+        res.setData(dtos);
         res.setSuccess(true);
-        return new ResponseEntity<ListDataDTO<UserModulePickEntity>>(res, HttpStatus.OK);
+        return new ResponseEntity<ListDataDTO<UserModulePickDTO>>(res, HttpStatus.OK);
 
     }
 
@@ -106,8 +112,8 @@ public class PlanController {
             return new ResponseEntity<String>("Cannot find user with username " + auth.getName(), HttpStatus.NOT_FOUND);
         }
         int userID = user.get().getUser_id();
-        UserModulePickEntity umpe = umpRepo.findByUserAndCategoryAndModule(userID,pickToRemove.getCategoryID(), pickToRemove.getModuleID());
-        umpRepo.delete(umpe);
+        //UserModulePickEntity umpe = umpRepo.findByUserAndCategoryAndModule(userID,pickToRemove.getCategoryID(), pickToRemove.getModuleID());
+        //umpRepo.delete(umpe);
         SuccessAndMessageDTO res = new SuccessAndMessageDTO();
         res.setMessage("Success");
         res.setSuccess(true);
