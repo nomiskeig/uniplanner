@@ -1,29 +1,31 @@
 export interface Module {
-    name: String
-    module_id: number,
-    responsible: String,
-    ects: String,
+    name: string
+    moduleID: number,
+    stringID: string
+    responsible: string,
+    ects: number,
     turnus: string,
     compulsoryParts: CompulsoryPartID[],
+    categories: Category[],
     requirements: String,
     successControl: String,
     content: String,
     qualificationGoals: String,
     recommendations: String | null
-    partOf: InDepthModule[]
+
 
 
 }
 export interface PickedCategories {
-    indepth1: number,
-    indepth2: number,
-    supplementary: number
+    indepth1Category: Category,
+    indepth2Category: Category,
+    supplementaryCategory: Category
     
 }
 
 export interface PickedModule {
-    moduleID: number,
-    categoryID: number
+    module: Module,
+    category: Category
 }
 export interface User {
     token: string,
@@ -33,15 +35,17 @@ export interface User {
 
 export interface CategoryType {
     name: string,
-    categoryType_id: number
+    typeID: number
+    categories: Category[];
 }
 export interface Category {
     name: string,
-    category_id: number,
-    type: number,
+    modules: Module[],
+    categoryID: number,
     info: string,
     minECTS: number,
     maxECTS: number
+    type: CategoryType
 
 }
 
@@ -64,10 +68,6 @@ export interface InDepthModule {
 }
 
 
-export interface ModuleToCategoryMapping {
-    category: number,
-    module: number,
-}
 
 export interface Turnus {
     name: string
