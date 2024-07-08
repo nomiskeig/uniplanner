@@ -2,7 +2,7 @@
 
 //import { parseModules } from "../../parsers/infomasterparser.ts"
 import { ColumnFiltersState, FilterFn, createColumnHelper, flexRender, getCoreRowModel, getFilteredRowModel, useReactTable } from "@tanstack/react-table";
-import { Category, CategoryType, InDepthModule, Module, ModuleToCategoryMapping, PickedCategories, PickedModule, Turnus } from "../types.ts";
+import { Category, CategoryType, InDepthModule, Module, PickedCategories, PickedModule, Turnus } from "../types.ts";
 import React, { useContext, useEffect, useState } from "react";
 import { Dropdown, DropdownProps } from "@/components/Dropdown.tsx";
 import Link from "next/link";
@@ -23,13 +23,14 @@ export default function Page() {
     const [categories, setCategories] = React.useState<Category[]>(() => [])
     const [categoryTypes, setCategoryTypes] = React.useState<CategoryType[]>(() => [])
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
-    const [globalMappings, setGlobalMappings] = React.useState<ModuleToCategoryMapping[]>([]);
-    const [currentCategoryType, setCurrentCategoryType] = React.useState<CategoryType>({ name: "All categories", categoryType_id: 0 });
+    const [currentCategoryType, setCurrentCategoryType] = React.useState<CategoryType>({ name: "All categories", typeID: 0, categories: [] });
     const [pickedCategories, setPickedCategories] = useState<PickedCategories | {}>({})
     const columnHelper = createColumnHelper<Module>();
-    const {isLoggedIn, user} = useLogin("/modules", false);
+    const { isLoggedIn, user } = useLogin("/modules", false);
+
     const { pickedModules } = useGetPickedModules(user.token);
     const columns = [
+
 
         columnHelper.accessor('name', {
             cell: info => {
@@ -51,7 +52,7 @@ export default function Page() {
                 return false;
             }
         }),
-        columnHelper.accessor('module_id', {
+        columnHelper.accessor('moduleID', {
             cell: info => info.getValue(),
             id: "id",
             filterFn: (row, columnId, filterValue) => {
@@ -70,25 +71,23 @@ export default function Page() {
 
     function getButtonMenuOptions(module: Module): ButtonMenuOption[] {
         // find the categories which the module can belong to
-        let possibleCategories = categories.filter(cat => globalMappings.find(gm => gm.module == module.module_id && gm.category == cat.category_id))
-        // filter out the indepth modules and the supplementary
-        let catTypesToFilter = categoryTypes.filter(catType => (catType.name == 'inDepth' || catType.name == 'supplementary')).map(catType => catType.categoryType_id);
+        let possibleCategories = module.categories.filter(cat => (cat.type.name != "inDepth" && cat.type.name != "supplementary") || Object.values(pickedCategories).map(cat => cat.categoryID).includes(cat.categoryID))
 
-        possibleCategories = possibleCategories.filter(cat => !catTypesToFilter.includes(cat.type) || Object.values(pickedCategories).includes(cat.category_id));
         // check if the one of the possible categories is already picked, cause it is not possible to add the module to another category
         // if this is the case, return 
         let categoryOfModule: Category | undefined;
         const isAlreadyPicked = pickedModules.filter(pm => {
-            if (pm.moduleID != module.module_id) {
+            if (pm.module.moduleID != module.moduleID) {
                 return false;
             }
 
-            categoryOfModule = possibleCategories.find(pc => pc.category_id == pm.categoryID)
+            categoryOfModule = possibleCategories.find(pc => pc.categoryID == pm.category.categoryID)
             return categoryOfModule != undefined
         }
         ).length > 0 ? true : false
         if (isAlreadyPicked) {
-            return [{ text: "Remove from " + categoryOfModule!.name, action: () => {
+            return [{
+                text: "Remove from " + categoryOfModule!.name, action: () => {
                     fetch("http://localhost:8080/api/v1/plan/removeModulePick", {
                         method: "POST",
                         headers: {
@@ -97,20 +96,17 @@ export default function Page() {
                         },
                         mode: 'cors',
                         body: JSON.stringify({
-                            "categoryID": categoryOfModule!.category_id,
-                            "moduleID": module.module_id
+                            "categoryID": categoryOfModule!.categoryID,
+                            "moduleID": module.moduleID
                         }),
                     })
-            } }]
+                }
+            }]
 
 
         }
 
         return possibleCategories.map((cat) => {
-            if (pickedModules!.find(pm => pm.categoryID == cat.category_id && pm.moduleID == module.module_id)) {
-                return { text: "Remove from " + cat.name, action: () => { } }
-
-            }
             return {
                 text: "Add to " + cat.name, action: () => {
                     fetch("http://localhost:8080/api/v1/plan/addModulePick", {
@@ -121,11 +117,12 @@ export default function Page() {
                         },
                         mode: 'cors',
                         body: JSON.stringify({
-                            "categoryID": cat.category_id,
-                            "moduleID": module.module_id
+                            "categoryID": cat.categoryID,
+                            "moduleID": module.moduleID
                         }),
-                    })
+                    }).then()
                 }
+
             }
         })
 
@@ -136,7 +133,8 @@ export default function Page() {
         fetch(`http://localhost:8080/api/v1/data/modules?studyCourseID=${studyCourse}`).then((res => res.json())).then((data) => setModules(data.data)).catch(err => console.log(err))
         fetch(`http://localhost:8080/api/v1/data/categories?studyCourseID=${studyCourse}`).then((res => res.json())).then((data) => setCategories(data.data)).catch(err => console.log(err))
         fetch(`http://localhost:8080/api/v1/data/categoryTypes?studyCourseID=${studyCourse}`).then((res => res.json())).then((data) => setCategoryTypes(data.data)).catch(err => console.log(err))
-        fetch(`http://localhost:8080/api/v1/data/mappings?studyCourseID=${studyCourse}`).then((res => res.json())).then((data) => setGlobalMappings(data.data)).catch(err => console.log(err))
+    }, [])
+    useEffect(() => {
         if (user.isLoggedIn) {
             fetch('http://localhost:8080/api/v1/plan/getCategoryPicks', {
                 method: 'GET', headers: {
@@ -146,19 +144,9 @@ export default function Page() {
 
         }
 
-
     }, [])
 
 
-    function isMappedToCategoryType(moduleID: number, typeID: number) {
-        let posCategories = categories.filter(c => (c.type == typeID) || typeID == 0).map(c => c.category_id);
-        return globalMappings.find(m => m.module == moduleID && posCategories.includes(m.category))
-
-    }
-    function isMappedToCategory(moduleID: number, categoryID: number) {
-        return globalMappings.find(m => m.module == moduleID && m.category == categoryID)
-
-    }
     const turnusPossibilities: Turnus[] = [];
     turnusPossibilities.push({ name: "Any turnus" })
     function isIncluded(turnuse: Turnus[], t: Module): boolean {
@@ -179,13 +167,13 @@ export default function Page() {
         title: "In depth module",
         defaultIndex: 0,
         options:
-            categories.filter(cat => cat.type == currentCategoryType.categoryType_id).map(cat => ({
+            categories.filter(cat => cat.type.name == "inDepth").map(cat => ({
                 element: cat,
                 name: cat.name,
                 callback: (newCat: Category) => {
                     setColumnFilters(([...columnFilters.filter(item => item.id != 'id'), {
                         id: "id",
-                        value: modules.map(m => m.module_id).filter(m => isMappedToCategory(m, newCat.category_id))
+                        value: newCat.modules.map(m => m.moduleID)
                     }]))
                 }
             })),
@@ -195,13 +183,13 @@ export default function Page() {
         title: "Supplementary module",
         defaultIndex: 0,
         options:
-            categories.filter(cat => cat.type == currentCategoryType.categoryType_id).map(cat => ({
+            categories.filter(cat => cat.type.name == "supplementary").map(cat => ({
                 element: cat,
                 name: cat.name,
                 callback: (newCat: Category) => {
                     setColumnFilters(([...columnFilters.filter(item => item.id != 'id'), {
                         id: "id",
-                        value: modules.map(m => m.module_id).filter(m => isMappedToCategory(m, newCat.category_id))
+                        value: newCat.modules.map(m => m.moduleID)
                     }]))
                 }
             })),
@@ -220,18 +208,28 @@ export default function Page() {
 
 
     }
+    const  getModulesOfCategoryType = (type: CategoryType) => {
+        const catOfType = type.categories.map(c => c.categoryID);
+        console.log(catOfType)
+        console.log(modules)
+        return modules.filter(m => m.categories.find(c => catOfType.includes(c.categoryID))).map(m => m.moduleID);
+
+    };
+
+
     const categoryPickerOptions: DropdownProps<CategoryType> = {
         title: "Category",
         options:
-            categoryTypes.concat([{ name: "All categories", categoryType_id: 0 }]).map(cat => ({
-                element: cat,
-                name: cat.name,
+            categoryTypes.concat([{ name: "All categories", typeID: 0, categories: [...categories] }]).map(type => ({
+                element: type,
+                name: type.name,
                 callback: (newCatType: CategoryType) => {
                     setCurrentCategoryType(newCatType);
-                    setColumnFilters(([...columnFilters.filter(item => item.id != "id"), {
+                    setColumnFilters(([...columnFilters.filter(item => item.id != 'id'), {
                         id: "id",
-                        value: modules.map(m => m.module_id).filter(n => isMappedToCategoryType(n, newCatType.categoryType_id))
+                        value: getModulesOfCategoryType(newCatType)
                     }]))
+
                 }
             })),
         defaultIndex: 0,
@@ -263,9 +261,8 @@ export default function Page() {
     const showSupplementaryPicker = currentCategoryType.name == "supplementary"
 
     function getRowColor(index: number, moduleID: number) {
-        if (pickedModules && pickedModules.find(pm => pm.moduleID == moduleID)) {
+        if (pickedModules && pickedModules.find(pm => pm.module.moduleID == moduleID)) {
             return "bg-green-400"
-
         }
         if (index % 2 == 0) {
             return "bg-gray-300"
@@ -278,7 +275,7 @@ export default function Page() {
 
 
     return <div className="p-5 bg-[#eeeeee] ">
-        <button onClick={() => console.log(columnFilters)}>Print</button>
+        <button onClick={() => console.log(modules)}>Print</button>
         <div className="mb-10 text-3xl font-bold">Modules overview</div>
         <div className="flex mb-10 gap-6">
             <div className="flex-auto">
