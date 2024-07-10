@@ -11,30 +11,30 @@ import { useGetPublicData } from "@/hooks/useGetPublicData";
 import { useGetPickedCategories } from "@/hooks/useGetPickedCategories";
 import { useGetPickedModules } from "@/hooks/useGetPickedModules";
 import { useLogin } from "@/hooks/useLogin";
+import { useNotificiations } from "@/hooks/useNotifications";
 
 
 export default function Page() {
 
-    const {categories, categoryTypes, modules, isLoading, error } = useGetPublicData(1);
-    const {user, isLoggedIn} = useLogin("/plan", true);
-    const {pickedModules, pickedModulesError, isPickedModulesLoading} = useGetPickedModules(user.token);
-    const {pickedCategories, setPickedCategories, pickedCategoriesError, isPickedCategoriesLoading} = useGetPickedCategories(user.token);
+    const { categories, categoryTypes, modules, isLoading, error } = useGetPublicData(1);
+    const { user, isLoggedIn } = useLogin("/plan", true);
+    const { pickedModules, pickedModulesError, isPickedModulesLoading } = useGetPickedModules(user.token);
+    const { pickedCategories, setPickedCategories, pickedCategoriesError, isPickedCategoriesLoading } = useGetPickedCategories(user.token);
+    const { addNotification } = useNotificiations();
     const { i18n, t } = useTranslation();
     if (isLoading || isPickedModulesLoading || pickedCategories == null) {
         return <div>Loading</div>
     }
 
-    const inDepthType = categoryTypes.find(catType => catType.name == "inDepth")!.categoryType_id
-    const supplementaryType = categoryTypes.find(catType => catType.name == "supplementary")!.categoryType_id
-    const indepth1PickerOptions: DropdownOption<Category>[] = categories.filter(cat => cat.type == inDepthType).map(cat => {
+    const indepth1PickerOptions: DropdownOption<Category>[] = categoryTypes.find(type => type.name == "inDepth")!.categories.map(cat => {
         return {
             name: cat.name,
             element: cat,
             callback: (cat: Category) => {
                 let newCategories = {
-                    "indepth1": cat.category_id,
-                    "indepth2": pickedCategories.indepth2,
-                    "supplementary": pickedCategories.supplementary
+                    "indepth1": cat.categoryID,
+                    "indepth2": pickedCategories.indepth2Category.categoryID,
+                    "supplementary": pickedCategories.supplementaryCategory.categoryID
                 }
                 fetch('http://localhost:8080/api/v1/plan/updateCategoryPicks', {
                     method: 'PUT',
@@ -48,7 +48,12 @@ export default function Page() {
                 }
                 ).then(res => {
                     if (res.ok) {
-                        setPickedCategories(newCategories)
+                        console.log("wtf")
+                        setPickedCategories({
+                            indepth1Category: cat,
+                            indepth2Category: pickedCategories.indepth2Category,
+                            supplementaryCategory: pickedCategories.supplementaryCategory
+                        })
 
                     }
                 })
@@ -57,15 +62,15 @@ export default function Page() {
 
         }
     })
-    const indepth2PickerOptions: DropdownOption<Category>[] = categories.filter(cat => cat.type == inDepthType).map(cat => {
+    const indepth2PickerOptions: DropdownOption<Category>[] = categoryTypes.find(type => type.name == "inDepth")!.categories.map(cat => {
         return {
             name: cat.name,
             element: cat,
             callback: (cat: Category) => {
                 let newCategories = {
-                    "indepth1": pickedCategories.indepth1,
-                    "indepth2": cat.category_id,
-                    "supplementary": pickedCategories.supplementary
+                    "indepth1": pickedCategories.indepth1Category.categoryID,
+                    "indepth2": cat.categoryID,
+                    "supplementary": pickedCategories.supplementaryCategory.categoryID
                 }
                 fetch('http://localhost:8080/api/v1/plan/updateCategoryPicks', {
                     method: 'PUT',
@@ -79,24 +84,33 @@ export default function Page() {
                 }
                 ).then(res => {
                     if (res.ok) {
-                        setPickedCategories(newCategories)
+                        setPickedCategories({
+                            indepth1Category: pickedCategories.indepth1Category,
+                            indepth2Category: cat,
+                            supplementaryCategory: pickedCategories.supplementaryCategory
+                        })
 
                     }
+                    else {
+                            res.json().then(text => addNotification(text.message, "Error"))
+                    }
+
+                }).catch(err => {
                 })
             }
 
 
         }
     })
-    const supplementaryPickerOptions: DropdownOption<Category>[] = categories.filter(cat => cat.type == supplementaryType).map(cat => {
+    const supplementaryPickerOptions: DropdownOption<Category>[] = categoryTypes.find(type => type.name == "supplementary")!.categories.map(cat => {
         return {
             name: cat.name,
             element: cat,
             callback: (cat: Category) => {
                 let newCategories = {
-                    "indepth1": pickedCategories.indepth1,
-                    "indepth2": pickedCategories.indepth2,
-                    "supplementary": cat.category_id
+                    "indepth1": pickedCategories.indepth1Category.categoryID,
+                    "indepth2": pickedCategories.indepth1Category.categoryID,
+                    "supplementary": cat.categoryID
                 }
                 fetch('http://localhost:8080/api/v1/plan/updateCategoryPicks', {
                     method: 'PUT',
@@ -110,34 +124,36 @@ export default function Page() {
                 }
                 ).then(res => {
                     if (res.ok) {
-                        setPickedCategories(newCategories)
+                        setPickedCategories({
+                            indepth1Category: pickedCategories.indepth1Category,
+                            indepth2Category: pickedCategories.indepth2Category,
+                            supplementaryCategory: cat
+                        })
 
                     }
                 })
             }
-
-
         }
     })
     if (pickedModules == null) {
         return <div>Loading</div>
     }
-    const pickedInDepth1Modules = modules.filter(m => pickedModules.find(pm => (pm.moduleID == m.module_id && pm.categoryID == pickedCategories.indepth1) ? true : false));
-    const pickedInDepth2Modules = modules.filter(m => pickedModules.find(pm => (pm.moduleID == m.module_id && pm.categoryID == pickedCategories.indepth2) ? true : false));
-    const pickedSupplementaryModules = modules.filter(m => pickedModules.find(pm => (pm.moduleID == m.module_id && pm.categoryID == pickedCategories.supplementary) ? true : false));
-    const inDepth1Cat = categories.find(cat => cat.category_id == pickedCategories.indepth1)!
-    const inDepth2Cat = categories.find(cat => cat.category_id == pickedCategories.indepth2)!
-    const supplementaryCat = categories.find(cat => cat.category_id == pickedCategories.supplementary)!
-    const inDepth1Default = indepth1PickerOptions.findIndex(option => option.element.category_id == pickedCategories.indepth1)
-    const inDepth2Default = indepth1PickerOptions.findIndex(option => option.element.category_id == pickedCategories.indepth2)
-    const supplementaryDefault = supplementaryPickerOptions.findIndex(option => option.element.category_id == pickedCategories.supplementary)
+    const inDepth1Cat = pickedCategories.indepth1Category;
+    const inDepth2Cat = pickedCategories.indepth2Category;
+    const supplementaryCat = pickedCategories.supplementaryCategory
+    const pickedInDepth1Modules = pickedModules.filter(pm => pm.category.categoryID == inDepth1Cat.categoryID).map(pm => pm.module)
+    const pickedInDepth2Modules = pickedModules.filter(pm => pm.category.categoryID == inDepth2Cat.categoryID).map(pm => pm.module)
+    const pickedSupplementaryModules = pickedModules.filter(pm => pm.category.categoryID == supplementaryCat.categoryID).map(pm => pm.module)
+    const inDepth1Default = indepth1PickerOptions.findIndex(option => option.element.categoryID == pickedCategories.indepth1Category.categoryID)
+    const inDepth2Default = indepth1PickerOptions.findIndex(option => option.element.categoryID == pickedCategories.indepth2Category.categoryID)
+    const supplementaryDefault = supplementaryPickerOptions.findIndex(option => option.element.categoryID == pickedCategories.supplementaryCategory.categoryID)
     return <div>
         <div>Plan</div>
         <div>
             <div className="p-2">
-                <Dropdown title={`${t("pickedIn")} ${t("inDepthModule")} 1`} options={indepth1PickerOptions} defaultIndex={inDepth1Default} ></Dropdown>
-                <Dropdown title={`${t("pickedIn")} ${t("inDepthModule")} 2`} options={indepth2PickerOptions} defaultIndex={inDepth2Default} ></Dropdown>
-                <Dropdown title={`${t("pickedIn")} ${t("supplementaryModule")}`} options={supplementaryPickerOptions} defaultIndex={supplementaryDefault} ></Dropdown>
+                <Dropdown setNewItem={false} title={`${t("pickedIn")} ${t("inDepthModule")} 1`} options={indepth1PickerOptions} defaultIndex={inDepth1Default} ></Dropdown>
+                <Dropdown setNewItem={false} title={`${t("pickedIn")} ${t("inDepthModule")} 2`} options={indepth2PickerOptions} defaultIndex={inDepth2Default} ></Dropdown>
+                <Dropdown setNewItem={false} title={`${t("pickedIn")} ${t("supplementaryModule")}`} options={supplementaryPickerOptions} defaultIndex={supplementaryDefault} ></Dropdown>
             </div>
             <div className="grid grid-cols-2">
                 <CategoryContainer
