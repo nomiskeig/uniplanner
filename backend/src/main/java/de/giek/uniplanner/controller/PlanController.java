@@ -51,14 +51,67 @@ public class PlanController {
     @PutMapping("/updateCategoryPicks")
     public ResponseEntity<SuccessAndMessageDTO> updateUserPicks(Authentication auth,
             @RequestBody CategoryPickDTO picks) {
-        System.out.println("called update userpicks");
-        System.out.println("user: " + auth.getName());
-        int userID = userRepo.findByUsername(auth.getName()).orElseThrow().getUser_id();
-        UserCategoryPickEntity ucpe = ucpRepo.findByUserID(userID);
-        // ucpe.setIndepth1(picks.getIndepth1());
-        // ucpe.setIndepth2(picks.getIndepth2());
-        // ucpe.setSupplementary(picks.getSupplementary());
+
+        UserEntity user = userRepo.findByUsername(auth.getName()).orElseThrow();
+        UserCategoryPickEntity ucpe = ucpRepo.findByUser(user);
+        Optional<CategoryEntity> maybeIndepth1 = categoryRepo.findById(picks.getIndepth1());
+        if (maybeIndepth1.isEmpty()) {
+            SuccessAndMessageDTO res = new SuccessAndMessageDTO();
+            res.setMessage("There is no category with id " + picks.getIndepth1() + ".");
+            res.setSuccess(false);
+            return new ResponseEntity<SuccessAndMessageDTO>(res, HttpStatus.CONFLICT);
+
+        }
+        Optional<CategoryEntity> maybeIndepth2 = categoryRepo.findById(picks.getIndepth2());
+        if (maybeIndepth2.isEmpty()) {
+            SuccessAndMessageDTO res = new SuccessAndMessageDTO();
+            res.setMessage("There is no category with id " + picks.getIndepth2() + ".");
+            res.setSuccess(false);
+            return new ResponseEntity<SuccessAndMessageDTO>(res, HttpStatus.CONFLICT);
+
+        }
+
+        Optional<CategoryEntity> maybeSupplementary = categoryRepo.findById(picks.getSupplementary());
+        if (maybeIndepth2.isEmpty()) {
+            SuccessAndMessageDTO res = new SuccessAndMessageDTO();
+            res.setMessage("There is no category with id " + picks.getSupplementary() + ".");
+            res.setSuccess(false);
+            return new ResponseEntity<SuccessAndMessageDTO>(res, HttpStatus.CONFLICT);
+        }
+        if (picks.getIndepth1() == picks.getIndepth2()) {
+            SuccessAndMessageDTO res = new SuccessAndMessageDTO();
+            res.setMessage("Cannot pick the same indepth category twice.");
+            res.setSuccess(false);
+            return new ResponseEntity<SuccessAndMessageDTO>(res, HttpStatus.CONFLICT);
+
+        }
+
+
+        
+
+        // delete picks of the changed categories
+        if (ucpe.getIndepth1().getCategory_id() != picks.getIndepth1()) {
+            // indepth1 changed
+            umpRepo.deleteByCategoryID(ucpe.getIndepth1().getCategory_id());
+        }
+        if (ucpe.getIndepth2().getCategory_id() != picks.getIndepth2()) {
+            // indepth2 changed
+            umpRepo.deleteByCategoryID(ucpe.getIndepth2().getCategory_id());
+        }
+        if (ucpe.getSupplementary().getCategory_id() != picks.getSupplementary()) {
+            // supplementary changed
+            umpRepo.deleteByCategoryID(ucpe.getSupplementary().getCategory_id());
+        }
+        CategoryEntity indepth1 = maybeIndepth1.get();
+        CategoryEntity indepth2 = maybeIndepth2.get();
+
+        CategoryEntity supplementary = maybeSupplementary.get();
+        ucpe.setIndepth1(indepth1);
+        ucpe.setIndepth2(indepth2);
+        ucpe.setSupplementary(supplementary);
+
         ucpRepo.save(ucpe);
+
 
         SuccessAndMessageDTO res = new SuccessAndMessageDTO();
         res.setMessage("Success");
