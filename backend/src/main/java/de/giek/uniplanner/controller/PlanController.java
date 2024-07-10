@@ -135,15 +135,19 @@ public class PlanController {
 
     @PostMapping("/removeModulePick")
     public ResponseEntity removeModulePick(Authentication auth, @RequestBody UserPickDTO pickToRemove) {
-        Optional<UserEntity> user = userRepo.findByUsername(auth.getName());
-        if (!user.isPresent()) {
-            return new ResponseEntity<String>("Cannot find user with username " + auth.getName(), HttpStatus.NOT_FOUND);
+        UserEntity user = userRepo.findByUsername(auth.getName()).orElseThrow();
+
+        Optional<UserModulePickEntity> maybeUmpe = umpRepo.findByUserAndCategoryAndModule(user,
+                pickToRemove.getCategoryID(), pickToRemove.getModuleID());
+        if (maybeUmpe.isEmpty()) {
+            SuccessAndMessageDTO res = new SuccessAndMessageDTO();
+            res.setMessage("Module with id " + pickToRemove.getModuleID() + " is not picked in category with id "
+                    + pickToRemove.getCategoryID());
+            res.setSuccess(false);
+            return new ResponseEntity<SuccessAndMessageDTO>(res, HttpStatus.CONFLICT);
         }
-        int userID = user.get().getUser_id();
-        // UserModulePickEntity umpe =
-        // umpRepo.findByUserAndCategoryAndModule(userID,pickToRemove.getCategoryID(),
-        // pickToRemove.getModuleID());
-        // umpRepo.delete(umpe);
+        UserModulePickEntity umpe = maybeUmpe.get();
+         umpRepo.delete(umpe);
         SuccessAndMessageDTO res = new SuccessAndMessageDTO();
         res.setMessage("Success");
         res.setSuccess(true);
