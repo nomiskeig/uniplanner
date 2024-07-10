@@ -1,5 +1,4 @@
 package de.giek.uniplanner.controller;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -122,12 +121,13 @@ public class PlanController {
 
     @GetMapping("/getCategoryPicks")
     public ResponseEntity getUserPicks(Authentication auth) {
-        Optional<UserEntity> user = userRepo.findByUsername(auth.getName());
-        if (!user.isPresent()) {
+        Optional<UserEntity> maybeUser = userRepo.findByUsername(auth.getName());
+        if (!maybeUser.isPresent()) {
             return new ResponseEntity<String>("Cannot find user with username " + auth.getName(), HttpStatus.NOT_FOUND);
         }
+        UserEntity user = maybeUser.get();
 
-        UserCategoryPickEntity ucpe = ucpRepo.findByUserID(user.get().getUser_id());
+        UserCategoryPickEntity ucpe = ucpRepo.findByUser(user);
         UserCategoryPickDTO dto = new UserCategoryPickDTO(ucpe);
         return new ResponseEntity<UserCategoryPickDTO>(dto, HttpStatus.OK);
 
