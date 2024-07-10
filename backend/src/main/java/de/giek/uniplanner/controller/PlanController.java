@@ -3,6 +3,7 @@ package de.giek.uniplanner.controller;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -84,6 +85,14 @@ public class PlanController {
         UserEntity user = userRepo.findByUsername(auth.getName()).orElseThrow();
         Optional<ModuleEntity> maybeModule = moduleRepo.findByModuleIdAndCategoryID(pick.getModuleID(),
                 pick.getCategoryID());
+        Set<UserModulePickEntity> maybeUmpe = umpRepo.findByUserAndModule(user, pick.getModuleID());
+        if (!maybeUmpe.isEmpty()) {
+            SuccessAndMessageDTO res = new SuccessAndMessageDTO();
+            res.setMessage("Module with id " + pick.getModuleID() + " is already picked.");
+            res.setSuccess(false);
+            return new ResponseEntity<SuccessAndMessageDTO>(res, HttpStatus.CONFLICT);
+
+        }
         if (maybeModule.isEmpty()) {
             SuccessAndMessageDTO res = new SuccessAndMessageDTO();
             res.setMessage("Module with id " + pick.getModuleID() + " can not be picked in category with id "
