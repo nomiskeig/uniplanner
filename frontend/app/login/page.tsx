@@ -1,5 +1,6 @@
 "use client"
 
+
 import { Button } from "@/components/Button";
 import { Input } from "@/components/Input";
 import { UserContext } from "@/components/UserContext";
@@ -8,8 +9,8 @@ import { useRouter } from "next/navigation";
 import React, { useContext, useEffect } from "react";
 
 function writeToCookie(token: string, username: string) {
-    document.cookie = "token="+token
-    document.cookie = "username="+username
+    document.cookie = "token=" + token
+    document.cookie = "username=" + username
 }
 
 export default function Page() {
@@ -32,13 +33,13 @@ export default function Page() {
         })
             .then(res => {
                 if (!res.ok) {
-                    alert("Error when logging in: " +  res.status)
+                    alert("Error when logging in: " + res.status)
 
                 }
 
                 return res.json()
             })
-            .then(data => { writeToCookie(data.token, usernameInput), userContext.setUser({ token: data.token, username: usernameInput, isLoggedIn: true }); router.push("/modules")})
+            .then(data => { writeToCookie(data.token, usernameInput), userContext.setUser({ token: data.token, username: usernameInput, isLoggedIn: true }); router.push("/modules") })
             .catch(err => console.log(err.message))
 
 
@@ -47,7 +48,7 @@ export default function Page() {
     return <div>
         <div>
             <Link href="/plan">Go to plan</Link>
-            <button onClick={() => {console.log(userContext.user)}}>print</button>
+            <button onClick={() => { console.log(userContext.user) }}>print</button>
             Login
             <Input title={"Username"} type={"text"} value={usernameInput} onChange={(newValue: string) => setUsernameInput(newValue)}></Input>
             <Input title={"Password"} type={"password"} value={passwordInput} onChange={(newValue: string) => setPasswordInput(newValue)}></Input>

@@ -4,6 +4,7 @@ export interface DropdownProps<T> {
     options: DropdownOption<T>[]
     defaultIndex: number
     title: string
+    setNewItem: boolean
 
 }
 export interface DropdownOption<T> {
@@ -27,7 +28,8 @@ export function Dropdown<T>(props: DropdownProps<T>) {
                 return <div className="cursor-pointer py-1 px-2 hover:bg-gray-300 border-black bg-gray-200"
                     onClick={() => {
                         option.callback(option.element);
-                        setCurrent(option);
+
+                        if (props.setNewItem) setCurrent(option);
                         setExpanded(false);
                     }}
                     key={index}>{option.name}</div>

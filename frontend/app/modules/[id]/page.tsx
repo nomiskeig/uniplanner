@@ -1,7 +1,8 @@
-import modules from "../../../parsers/infomasterModuls.json"
 
 export default function Page({ params }: { params: { id: string } }) {
+    return <div></div>
     const module = modules.find(elem => elem.id == params.id)!
+
     console.log("content", module.content)
     return <div className="p-5 ">
         {params.id}
