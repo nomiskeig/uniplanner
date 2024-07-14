@@ -13,7 +13,7 @@ export default function Page({ params }: { params: { id: string } }) {
     if (module == null) {
         return <div>Loading...</div>
     }
-    console.log(module.qualificationGoals)
+    console.log(module)
 
     return <div className="p-5 ">
         {params.id}
@@ -39,6 +39,8 @@ export default function Page({ params }: { params: { id: string } }) {
         <div className="whitespace-pre-line">{module.qualificationGoals}</div>
         <div className="mt-8 mb-5 text-2xl font-bold">Content</div>
         <div className="whitespace-pre-line">{module.content == '' ? "No content" : module.content}</div>
+        <div className="mt-8 mb-5 text-2xl font-bold">Success control</div>
+        <div className="whitespace-pre-line">{module.successControl == '' ? "No info" : module.successControl}</div>
         <div className="mt-8 mb-5 text-2xl font-bold">Requirements</div>
         <div>{module.requirements == '' ? "No requirements" : module.requirements}</div>
         <div className="mt-8 mb-5 text-2xl font-bold">Recommendations</div>

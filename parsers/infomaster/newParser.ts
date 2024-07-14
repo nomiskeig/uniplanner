@@ -123,7 +123,7 @@ export const infomasterParser: Parser = {
                 if (title == "Inhalt") {
                     content = c;
                 }
-                if (title == "Vorraussetzungen") {
+                if (title == "Voraussetzungen") {
                     requirements = c;
                 }
                 if (title == "Empfehlungen") {

@@ -19,6 +19,7 @@ public class ModuleDTO {
     private String requirements;
     private String recommendations;
     private String content;
+    private String successControl;
 
 	private String qualificationGoals;
 
@@ -32,6 +33,7 @@ public class ModuleDTO {
         this.requirements = me.getRequirements();
         this.recommendations = me.getRecommendations();
         this.content = me.getContent();
+        this.successControl = me.getSuccessControl();
         this.qualificationGoals = me.getQualificationGoals();
         if (addCategories) {
             this.categories = mapEntitiesToDTOs(me.getCategories());
@@ -39,6 +41,14 @@ public class ModuleDTO {
             this.categories = new HashSet<>();
         }
     }
+
+	public String getSuccessControl() {
+		return successControl;
+	}
+
+	public void setSuccessControl(String successControl) {
+		this.successControl = successControl;
+	}
 
 	public int getModuleID() {
 		return moduleID;
