@@ -27,6 +27,8 @@ export async function dropTables() {
         await conn.query('SET foreign_key_checks = 0;')
         await conn.query('DROP TABLE if exists category, categoryType, studyCourse, module, moduleToCategoryMapping');
         await conn.query('SET foreign_key_checks = 1;')
+    } catch (e) {
+        console.log(e)
     } finally {
     }
 }
@@ -113,7 +115,7 @@ export async function addModules(modules: Module[], studyCourseID: number) {
     const conn = await getConnection();
 
     const data = modules.map(m => {
-        return [m.id, studyCourseID, m.name,m.turnus, m.responsible, m.ects, m.requirements, m.successControl, m.content, m.qualificationGoals, m.recommendations]
+        return [m.id, studyCourseID, m.name, m.turnus, m.responsible, m.ects, m.requirements, m.successControl, m.content, m.qualificationGoals, m.recommendations]
     })
     await conn.batch('INSERT INTO module (module_string_id, studyCourse, name, turnus,responsible, ects, requirements, successControl, content, qualificationGoals, recommendations) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', data)
 
@@ -125,15 +127,15 @@ export async function addCategoryTypes(categoryTypes: CategoryType[], studyCours
         categoryTypes.map(type => {
             return [type.name, studyCourseID]
         })
-    console.log(data)
+    //console.log(data)
     const res = await conn.batch('INSERT INTO `categoryType` (name, studyCourse) values (?, ?)', data)
-    console.log(res)
+    //console.log(res)
 
 }
 export async function addCategories(categories: Category[], studyCourseID: number) {
     const conn = await getConnection();
     const categoryTypes: { name: string, categoryType_id: number }[] = await conn.query("SELECT categoryType_id, name from categoryType where studyCourse = (?)", studyCourseID);
-    console.log(categoryTypes)
+    //console.log(categoryTypes)
     const data = categories.map(category => {
         return [category.name, categoryTypes.find(ct => ct.name == category.type.name)!.categoryType_id, "", studyCourseID, category.minECTS, category.maxECTS]
     })

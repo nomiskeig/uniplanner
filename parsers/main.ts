@@ -22,7 +22,7 @@ for (let m of modules) {
 }
 let mappings = infomasterParser.getModulesToCategoryMappings();
 for (let m of mappings) {
-    console.log(m)
+    //console.log(m)
 }
 
 

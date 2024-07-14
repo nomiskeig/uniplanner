@@ -95,12 +95,28 @@ export const infomasterParser: Parser = {
 
             let current = compulsoryPartsTable.next();
             while (current.hasClass("textblock")) {
-                //console.log(current.text());
                 let title = current.children().first().text().trim();
 
-                let c = current.children().first().next().text().trim();
-                //console.log(title)
-                //console.log(content)
+                let c = "" 
+                current.children().each(function(i, elem) {
+                    const tag = $(elem).get(0)!.tagName;
+                    if (tag == "div") {
+                        return;
+                    }
+                    if (tag == "p") {
+                        if ($(elem).text().startsWith("-")) {
+                            c += "\n"
+                        }
+                        c += " " +  $(elem).text();
+                    }
+                    if (tag == "ul") {
+                        c += "\n";
+                        $(elem).children().each(function(i, elem) {
+                            c += "- " + $(elem).text() + "\n";
+                        })
+                    }
+                    
+                })
                 if (title == "Erfolgskontrolle(n)") {
                     successControl = c;
                 }
@@ -119,7 +135,6 @@ export const infomasterParser: Parser = {
 
                 current = current.next();
             }
-            //console.log(successControl)
 
 
 
