@@ -25,7 +25,7 @@ export async function dropTables() {
     const conn = await getConnection();
     try {
         await conn.query('SET foreign_key_checks = 0;')
-        await conn.query('DROP TABLE if exists category, categoryType, studyCourse, module, moduleToCategoryMapping');
+        await conn.query('DROP TABLE if exists category, categoryType, studyCourse, module, moduleToCategoryMapping, modulePart, course, modulePartToModuleMapping');
         await conn.query('SET foreign_key_checks = 1;')
     } catch (e) {
         console.log(e)
@@ -92,6 +92,44 @@ export async function createTables() {
         + ')');
 
 
+    await conn.query('CREATE TABLE modulePart('
+        + 'modulePart_id int auto_increment,'
+        + 'stringID varchar(255),'
+        + 'kind varchar(255),'
+        + 'ects int,'
+        + 'successControl text,'
+        + 'requirements text,'
+        + 'recommendations text,'
+        + 'studyCourse int,'
+        + 'primary key(modulePart_id),'
+        + 'foreign key(studyCourse) references studyCourse(studyCourse_id)'
+        + ')');
+
+    await conn.query('CREATE TABLE course('
+        + 'course_id int auto_increment,'
+        + 'semester varchar(255),'
+        + 'id varchar(255),'
+        + 'link text,'
+        + 'courseName text,'
+        + 'sws varchar(255),'
+        + 'type varchar(255),'
+        + 'studyCourse int,'
+        + 'responsible text,'
+        + 'modulePart int,'
+        + 'primary key(course_id),'
+        + 'foreign key(studyCourse) references studyCourse(studyCourse_id),'
+        + 'foreign key(modulePart) references modulePart(modulePart_id)'
+        + ')');
+    await conn.query('CREATE TABLE modulePartToModuleMapping('
+        + 'modulePartToModuleMapping_id int auto_increment,'
+        + 'modulePart int,'
+        + 'module int,'
+        + 'studyCourse int,'
+        + 'primary key(modulePartToModuleMapping_id),'
+        + 'foreign key(modulePart) references modulePart(modulePart_id),'
+        + 'foreign key(module) references module(module_id),'
+        + 'foreign key(studyCourse) references studyCourse(studyCourse_id)'
+        + ')');
 
 
 
