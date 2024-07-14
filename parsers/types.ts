@@ -18,10 +18,6 @@ export interface PartPerformance {
     courses: Course[]
 
 };
-export interface Course {
-    name: String
-
-}
 
 
 export interface InDepthModule {
@@ -49,12 +45,41 @@ export interface ModuleToCategoryMapping {
     moduleID: string
 }
 
+export interface ModulePartToModuleMapping {
+    stringModulePartID: string,
+    stringModuleID: string,
+
+}
+
+export interface ModulePart {
+    stringID: string,
+    kind: string,
+    ects: string,
+    successControl: string,
+    requirements: string,
+    recommendations: string,
+    courses: Course[]
+
+}
+
+export interface Course {
+    semester: string,
+    id: string,
+    link: string,
+    courseName: string,
+    sws: string,
+    type: string,
+    responsible: string
+
+
+}
 
 export interface Parser {
     getStudyCourseName: () => string,
     getModules: () => Module[],
     getCategories: () => Category[],
     getModulesToCategoryMappings: () => ModuleToCategoryMapping[],
-
+    getModulePartToModuleMappings: () => ModulePartToModuleMapping[]
+    getModuleParts: () => ModulePart[]
 
 }

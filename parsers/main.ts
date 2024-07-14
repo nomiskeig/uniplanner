@@ -26,6 +26,9 @@ for (let m of mappings) {
 }
 
 
+let moduleParts = infomasterParser.getModuleParts();
+let modulePartMappings = infomasterParser.getModulePartToModuleMappings();
+
 
 
 async function insertData() {
