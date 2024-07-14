@@ -34,7 +34,7 @@ export default function Page() {
 
         columnHelper.accessor('name', {
             cell: info => {
-                return <Link href={`/modules/${info.row.getValue("id")}`}>{info.getValue()}</Link>
+                return <Link href={`/modules/${info.row.original.stringID}`}>{info.getValue()}</Link>
             }
         }),
         columnHelper.accessor('ects', {

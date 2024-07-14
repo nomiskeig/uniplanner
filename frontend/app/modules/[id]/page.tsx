@@ -1,9 +1,19 @@
+"use client"
+
+import { Module } from "@/app/types"
+import { useEffect, useState } from "react"
 
 export default function Page({ params }: { params: { id: string } }) {
-    return <div></div>
-    const module = modules.find(elem => elem.id == params.id)!
+    const [module, setModule] = useState<Module | null>(null)
 
-    console.log("content", module.content)
+    useEffect(() => {
+        fetch(`http://localhost:8080/api/v1/data/modules/${params.id}`).then((res => res.json())).then((data) => {console.log(data); setModule(data)}).catch(err => console.log(err))
+    },[])
+    
+    if (module == null) {
+        return <div>Loading...</div>
+    }
+
     return <div className="p-5 ">
         {params.id}
         <div className="mt-2 mb-10 text-3xl font-bold">{module.name.replaceAll("\n", "test")}</div>
@@ -17,10 +27,7 @@ export default function Page({ params }: { params: { id: string } }) {
             <div className="col-span-4 border-l border-black p-1 bg-gray-200">{module.responsible}</div>
             <div className="p-1 bg-gray-300">Part of</div>
             <div className="col-span-4 border-l border-black p-1 bg-gray-300">
-            {module.partOf.filter(module => module.name != "all modules").map(indephmodule => {
-                return <div>{module.partOf.length >= 3 ? "- " : ""}{indephmodule.name}</div>
-
-            })}
+                {module.categories.map((cat,index) => <div key={index}>{module.categories.length > 1 ? "- " : ""}{cat.name}</div>)}
             </div>
         </div>
 
