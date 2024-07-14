@@ -14,4 +14,8 @@ public interface ModuleRepo extends JpaRepository<ModuleEntity, Integer> {
 
     @Query("select m from ModuleEntity m join m.categories c where m.module_id = :moduleID and c.category_id = :categoryID")
 	Optional<ModuleEntity> findByModuleIdAndCategoryID(int moduleID, int categoryID);
+
+
+    @Query("select m from ModuleEntity m where m.module_string_id = :stringModuleID")
+	Optional<ModuleEntity> findByStringID(String stringModuleID);
 }

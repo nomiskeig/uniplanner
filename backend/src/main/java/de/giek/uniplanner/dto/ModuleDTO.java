@@ -8,26 +8,31 @@ import de.giek.uniplanner.model.ModuleEntity;
 
 public class ModuleDTO {
     private int moduleID;
-    public int getModuleID() {
-		return moduleID;
-	}
+    private String stringID;
 
-	public void setModuleID(int moduleID) {
-		this.moduleID = moduleID;
-	}
+	private String name;
 
-	private String stringID;
-    private String name;
-    private int ects;
+	private int ects;
     private Set<CategoryDTO> categories;
     private String turnus;
+    private String responsible;
+    private String requirements;
+    private String recommendations;
+    private String content;
 
-    public ModuleDTO(ModuleEntity me, boolean addCategories) {
+	private String qualificationGoals;
+
+	public ModuleDTO(ModuleEntity me, boolean addCategories) {
         this.moduleID = me.getModule_id();
         this.stringID = me.getModule_string_id();
         this.name = me.getName();
         this.ects = me.getEcts();
         this.turnus = me.getTurnus();
+        this.responsible = me.getResponsible();
+        this.requirements = me.getRequirements();
+        this.recommendations = me.getRecommendations();
+        this.content = me.getContent();
+        this.qualificationGoals = me.getQualificationGoals();
         if (addCategories) {
             this.categories = mapEntitiesToDTOs(me.getCategories());
         } else {
@@ -35,13 +40,51 @@ public class ModuleDTO {
         }
     }
 
-    private Set<CategoryDTO> mapEntitiesToDTOs(Set<CategoryEntity> ces) {
-        Set<CategoryDTO> res = new HashSet<>();
-        for (CategoryEntity ce : ces) {
-            res.add(new CategoryDTO(ce, false, false));
-        }
-        return res;
-    }
+	public int getModuleID() {
+		return moduleID;
+	}
+
+	public void setModuleID(int moduleID) {
+		this.moduleID = moduleID;
+	}
+
+	public String getResponsible() {
+		return responsible;
+	}
+
+	public void setResponsible(String responsible) {
+		this.responsible = responsible;
+	}
+
+	public String getRequirements() {
+		return requirements;
+	}
+
+	public void setRequirements(String requirements) {
+		this.requirements = requirements;
+	}
+
+	public String getRecommendations() {
+		return recommendations;
+	}
+
+	public void setRecommendations(String recommendations) {
+		this.recommendations = recommendations;
+	}
+    public String getContent() {
+		return content;
+	}
+    public void setContent(String content) {
+		this.content = content;
+	}
+    public String getQualificationGoals() {
+		return qualificationGoals;
+	}
+
+
+    public void setQualificationGoals(String qualificationGoals) {
+		this.qualificationGoals = qualificationGoals;
+	}
 
     public String getStringID() {
         return stringID;
@@ -81,6 +124,14 @@ public class ModuleDTO {
 
     public void setTurnus(String turnus) {
         this.turnus = turnus;
+    }
+
+    private Set<CategoryDTO> mapEntitiesToDTOs(Set<CategoryEntity> ces) {
+        Set<CategoryDTO> res = new HashSet<>();
+        for (CategoryEntity ce : ces) {
+            res.add(new CategoryDTO(ce, false, false));
+        }
+        return res;
     }
 
 }

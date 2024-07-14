@@ -2,11 +2,13 @@ package de.giek.uniplanner.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -17,6 +19,7 @@ import de.giek.uniplanner.dto.CategoryTypeDTO;
 import de.giek.uniplanner.dto.ListDataDTO;
 import de.giek.uniplanner.dto.ModuleDTO;
 import de.giek.uniplanner.dto.StudyCourseDTO;
+import de.giek.uniplanner.dto.SuccessAndMessageDTO;
 import de.giek.uniplanner.model.CategoryEntity;
 import de.giek.uniplanner.model.CategoryTypeEntity;
 import de.giek.uniplanner.model.MappingEntity;
@@ -54,6 +57,21 @@ public class DataController {
         res.setData(data);
         res.setSuccess(true);
         return new ResponseEntity<ListDataDTO<StudyCourseEntity>>(res, HttpStatus.OK);
+
+    }
+
+    @GetMapping("/modules/{stringModuleID}")
+    public ResponseEntity getModule(@PathVariable String stringModuleID) {
+        Optional<ModuleEntity> maybeModule = moduleRepo.findByStringID(stringModuleID);
+        if (maybeModule.isEmpty()) {
+            SuccessAndMessageDTO res = new SuccessAndMessageDTO();
+            res.setMessage("There is no module with id " + stringModuleID + ".");
+            res.setSuccess(false);
+            return new ResponseEntity<SuccessAndMessageDTO>(res, HttpStatus.CONFLICT);
+
+        }
+        ModuleDTO moduledto = new ModuleDTO(maybeModule.get(), true);
+        return new ResponseEntity<ModuleDTO>(moduledto, HttpStatus.OK);
 
     }
 
