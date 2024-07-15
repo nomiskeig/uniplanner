@@ -1,6 +1,6 @@
 import mariadb from "mariadb";
 import 'dotenv/config'
-import { Category, CategoryType, Module, ModuleToCategoryMapping } from "./types";
+import { Category, CategoryType, Module, ModulePart, ModulePartToModuleMapping, ModuleToCategoryMapping } from "./types";
 let conn: null | Promise<mariadb.Connection> = null;
 
 async function getConnection() {
@@ -97,6 +97,7 @@ export async function createTables() {
         + 'stringID varchar(255),'
         + 'kind varchar(255),'
         + 'ects int,'
+        + 'name varchar(255),'
         + 'successControl text,'
         + 'requirements text,'
         + 'recommendations text,'
@@ -189,6 +190,38 @@ export async function addStudyCourse(name: string) {
 
     return res.insertId;
 }
+
+
+export async function addModulePartsAndCourses(parts: ModulePart[], studyCourseID: number) {
+    const conn = await getConnection();
+    const data = parts.map(p => {
+        return [p.stringID, p.kind, p.ects, p.name, p.successControl, p.requirements, p.recommendations, studyCourseID]
+    })
+    await conn.batch('INSERT INTO modulePart (stringID, kind, ects, name, successControl, requirements, recommendations, studyCourse) values (?,?,?,?,?,?,?,?)', data)
+    const courseData: any[] = []
+    for (let part of parts) {
+        let partID = await conn.query("SELECT modulePart_id from modulePart where stringID = (?)", part.stringID).then(res => res[0].modulePart_id)
+        part.courses.forEach(c => {
+            courseData.push(
+                [c.semester, c.id, c.link, c.courseName, c.sws, c.type, studyCourseID, c.responsible, partID]
+            )
+        })
+    }
+    await conn.batch('INSERT INTO course(semester, id, link, courseName, sws, type, studyCourse, responsible, modulePart) values (?,?,?,?,?,?,?,?,?)', courseData);
+}
+export async function addModulePartsToModuleMappings(mappings: ModulePartToModuleMapping[], studyCourseID: number) {
+    const conn = await getConnection();
+    const data = [];
+    for (let m of mappings) {
+        const modulePartID = await conn.query("SELECT modulePart_id from modulePart where stringID = (?)", m.stringModulePartID).then(res => res[0].modulePart_id);
+        const moduleID = await conn.query("SELECT module_id from module where module_string_id = (?)", m.stringModuleID).then(res => res[0].module_id)
+        data.push([modulePartID, moduleID, studyCourseID])
+    }
+    await conn.batch('INSERT INTO modulePartToModuleMapping(modulePart, module, studyCourse) values (?, ?, ?)', data);
+
+}
+
+
 export async function setup() {
     await dropTables();
     await createTables();

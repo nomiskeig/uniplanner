@@ -54,6 +54,7 @@ export interface ModulePartToModuleMapping {
 export interface ModulePart {
     stringID: string,
     kind: string,
+    name: string,
     ects: string,
     successControl: string,
     requirements: string,

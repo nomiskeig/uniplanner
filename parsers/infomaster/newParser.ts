@@ -372,6 +372,7 @@ export const infomasterParser: Parser = {
 
             parts.push({
                 kind: kind,
+                name: name,
                 courses: courses,
                 stringID: stringID,
                 ects: ects,
