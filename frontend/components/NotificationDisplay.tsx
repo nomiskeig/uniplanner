@@ -1,5 +1,5 @@
 import { PropsWithChildren, useContext } from "react";
-import { NotificationContext } from "./NotificationContext";
+import { NotificationContext, Notification } from "./NotificationContext";
 
 export interface NotificationDisplayProps {
 
@@ -7,17 +7,29 @@ export interface NotificationDisplayProps {
 
 export function NotificationDisplay(props: NotificationDisplayProps) {
     const notificationContext = useContext(NotificationContext)
+    function getText(not: Notification) {
+        switch (not.type) {
+            case "Error": return "Error: " + not.text
+            case "Success": return "Success: "
+            case "Warning": return "Warning: " + not.text
+        }
+
+    }
+    function getColor(not: Notification) {
+        switch (not.type) {
+            case "Error": return "bg-red-400"
+            case "Success": return "bg-green-400"
+            case "Warning": return "bg-orange-400"
+        }
+    }
     return <div className="absolute right-[30px] top-[30px] w-[500px] rounded flex flex-col gap-4">
         {notificationContext.notifications.map(not => {
-            if (not.type == "Error") {
-                return <div className="p-2 rounded bg-red-400">Error: {not.text}</div>
-            }
-            if (not.type == "Success") {
-                return <div className="p-2 rounded bg-green-400">Success</div>
-            }
-            if (not.type == "Warning") {
-                return <div className="p-2 rounded bg-orange-400">Warning: {not.text}</div>
-            }
+            return <div className={`flex p-2 rounded ${getColor(not)}`}>
+                <div className="grow">{getText(not)}</div>
+                <div className="cursor-pointer"onClick={() => notificationContext.deleteNotification(not)}>x</div>
+                </div>
+
+
         })}
 
 

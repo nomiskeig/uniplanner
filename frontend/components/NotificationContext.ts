@@ -2,10 +2,10 @@
 
 import { createContext } from "react"
 
-export type NotificationType = "Success" | "Errror" | "Warning"
+export type NotificationType = "Success" | "Error" | "Warning"
 export interface Notification {
     text: string,
-    type: "Success" | "Error" | "Warning",
+    type: NotificationType 
     id: number
 }
 
