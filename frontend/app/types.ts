@@ -39,7 +39,8 @@ export interface Course {
     type: string,
     responsible: string,
     sws: string,
-    link: string
+    link: string,
+    id: string
 
 }
 

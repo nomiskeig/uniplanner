@@ -1,6 +1,5 @@
 "use client"
 
-//import { parseModules } from "../../parsers/infomasterparser.ts"
 import { ColumnFiltersState, FilterFn, createColumnHelper, flexRender, getCoreRowModel, getFilteredRowModel, useReactTable } from "@tanstack/react-table";
 import { Category, CategoryType, InDepthModule, Module, PickedCategories, PickedModule, Turnus } from "../types.ts";
 import React, { useContext, useEffect, useState } from "react";
@@ -10,6 +9,7 @@ import { UserContext } from "@/components/UserContext.ts";
 import { ButtonMenu, ButtonMenuOption } from "@/components/ButtonMenu.tsx";
 import { useGetPickedModules } from "@/hooks/useGetPickedModules.tsx";
 import { useLogin } from "@/hooks/useLogin.tsx";
+import { useTranslation } from "react-i18next";
 
 
 
@@ -28,6 +28,7 @@ export default function Page() {
     const columnHelper = createColumnHelper<Module>();
     const { isLoggedIn, user } = useLogin("/modules", false);
 
+    const { i18n, t } = useTranslation();
     const { pickedModules } = useGetPickedModules(user.token);
     const columns = [
 
@@ -39,14 +40,16 @@ export default function Page() {
         }),
         columnHelper.accessor('ects', {
             cell: info => info.getValue(),
-            id: "ects"
+            id: "ects",
+            header: e =>   <span>ECTS</span>
+            
         }),
         columnHelper.accessor('turnus', {
             cell: info => info.getValue(),
             id: "turnus",
             filterFn: (row, columnId, filterValue) => {
                 const turnus: string = row.getValue(columnId);
-                if (turnus == filterValue.name || filterValue.name == "Any turnus") {
+                if (turnus == filterValue.name || filterValue.name == t('anyTurnus')) {
                     return true;
                 }
                 return false;
@@ -148,7 +151,7 @@ export default function Page() {
 
 
     const turnusPossibilities: Turnus[] = [];
-    turnusPossibilities.push({ name: "Any turnus" })
+    turnusPossibilities.push({ name: t("anyTurnus") })
     function isIncluded(turnuse: Turnus[], t: Module): boolean {
         for (let turnus of turnuse) {
             if (turnus.name == t.turnus) {
@@ -164,7 +167,7 @@ export default function Page() {
         }
     }
     const inDepthPickerOptions: DropdownProps<Category> = {
-        title: "In depth module",
+        title: t('inDepthModule'),
         defaultIndex: 0,
         options:
             categories.filter(cat => cat.type.name == "inDepth").map(cat => ({
@@ -180,7 +183,7 @@ export default function Page() {
 
     };
     const supplementaryPickerOptions: DropdownProps<Category> = {
-        title: "Supplementary module",
+        title: t("supplementaryModule"),
         defaultIndex: 0,
         options:
             categories.filter(cat => cat.type.name == "supplementary").map(cat => ({
@@ -218,7 +221,7 @@ export default function Page() {
 
 
     const categoryPickerOptions: DropdownProps<CategoryType> = {
-        title: "Category",
+        title: t("category"),
         options:
             categoryTypes.concat([{ name: "All categories", typeID: 0, categories: [...categories] }]).map(type => ({
                 element: type,
@@ -275,8 +278,7 @@ export default function Page() {
 
 
     return <div className="p-5 bg-[#eeeeee] ">
-        <button onClick={() => console.log(modules)}>Print</button>
-        <div className="mb-10 text-3xl font-bold">Modules overview</div>
+        <div className="mb-10 text-3xl font-bold">{t("moduleOverview")}</div>
         <div className="flex mb-10 gap-6">
             <div className="flex-auto">
                 <Dropdown {...categoryPickerOptions} ></Dropdown>

@@ -3,8 +3,10 @@
 import { Module } from "@/app/types"
 import { ModulePartDisplay } from "@/components/ModulePartDisplay"
 import { useEffect, useState } from "react"
+import { useTranslation } from "react-i18next";
 
 export default function Page({ params }: { params: { id: string } }) {
+    const { i18n, t } = useTranslation();
     const [module, setModule] = useState<Module | null>(null)
 
     useEffect(() => {
@@ -16,7 +18,7 @@ export default function Page({ params }: { params: { id: string } }) {
     }
 
     return <div className="p-5 ">
-        <div className="text-2xl mb-4">Module</div>
+        <div className="text-2xl mb-4">{t('module')}</div>
         {params.id}
         <div className="mt-2 mb-10 text-3xl font-bold">{module.name}</div>
         
@@ -25,29 +27,29 @@ export default function Page({ params }: { params: { id: string } }) {
             <div className="col-span-4 border-l border-black p-1 bg-gray-200">{module.turnus}</div>
             <div className="p-1 bg-gray-300">ECTS</div>
             <div className="col-span-4 border-l border-black p-1 bg-gray-300">{module.ects}</div>
-            <div className="p-1 bg-gray-200">Responsible</div>
+            <div className="p-1 bg-gray-200">{t('responsible')}</div>
             <div className="col-span-4 border-l border-black p-1 bg-gray-200">{module.responsible}</div>
-            <div className="p-1 bg-gray-300">Part of</div>
+            <div className="p-1 bg-gray-300">{t('partOf')}</div>
             <div className="col-span-4 border-l border-black p-1 bg-gray-300">
                 {module.categories.map((cat,index) => <div key={index}>{module.categories.length > 1 ? "- " : ""}{cat.name}</div>)}
             </div>
         </div>
 
-        <div className="mt-8 mb-5 text-2xl font-bold">Parts</div>
+        <div className="mt-8 mb-5 text-2xl font-bold">{t('moduleParts')}</div>
 
         <div>
             {module.parts.map((p,i) => <ModulePartDisplay key={i} part={p}></ModulePartDisplay>)}
         </div>
 
-        <div className="mt-8 mb-5 text-2xl font-bold whitespace-pre-line">Qualification goals</div>
+        <div className="mt-8 mb-5 text-2xl font-bold whitespace-pre-line">{t('qualificationGoals')}</div>
         <div className="whitespace-pre-line">{module.qualificationGoals}</div>
-        <div className="mt-8 mb-5 text-2xl font-bold">Content</div>
+        <div className="mt-8 mb-5 text-2xl font-bold">{t('content')}</div>
         <div className="whitespace-pre-line">{module.content == '' ? "No content" : module.content}</div>
-        <div className="mt-8 mb-5 text-2xl font-bold">Success control</div>
+        <div className="mt-8 mb-5 text-2xl font-bold">{t('successControl')}</div>
         <div className="whitespace-pre-line">{module.successControl == '' ? "No info" : module.successControl}</div>
-        <div className="mt-8 mb-5 text-2xl font-bold">Requirements</div>
+        <div className="mt-8 mb-5 text-2xl font-bold">{t('requirements')}</div>
         <div>{module.requirements == '' ? "No requirements" : module.requirements}</div>
-        <div className="mt-8 mb-5 text-2xl font-bold">Recommendations</div>
+        <div className="mt-8 mb-5 text-2xl font-bold">{t('recommendations')}</div>
         <div>{module.recommendations == null  ? "No recommendations" : module.recommendations}</div>
     </div>
 

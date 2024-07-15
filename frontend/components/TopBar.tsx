@@ -1,5 +1,6 @@
 import { User } from "@/app/types"
 import Link from "next/link"
+import { useTranslation } from "react-i18next";
 
 const topBarButtonsClasses = "p-1 bg-gray-400 cursor-pointer w-32"
 export interface TopBarProps {
@@ -10,6 +11,7 @@ export interface TopBarProps {
 
 
 export default function TopBar(props: TopBarProps) {
+    const {t} = useTranslation();
     return <div className="flex">
         <div className={topBarButtonsClasses}>
             <Link href="/modules">Modules</Link>
@@ -21,7 +23,7 @@ export default function TopBar(props: TopBarProps) {
         <div className={topBarButtonsClasses}>
             {
             props.user.isLoggedIn ? 
-            <div>Hello, {props.user.username}</div> :
+            <div>{t('hello')}, {props.user.username}</div> :
             <Link href="/login">Log in</Link>
             }
         </div>

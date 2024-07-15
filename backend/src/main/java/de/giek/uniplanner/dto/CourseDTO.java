@@ -9,14 +9,22 @@ public class CourseDTO {
 	private String type;
 	private String responsible;
 	private String name;
+    private String id;
 	public CourseDTO(CourseEntity ce) {
         this.semester = ce.getSemester();
         this.link = ce.getLink();
         this.sws = ce.getSws();
         this.type = ce.getType();
+        this.id = ce.getId();
         this.responsible = ce.getResponsible();
         this.name = ce.getCourseName();
     }
+	public String getId() {
+		return id;
+	}
+	public void setId(String id) {
+		this.id = id;
+	}
 	public String getSemester() {
 		return semester;
 	}

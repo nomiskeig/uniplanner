@@ -1,5 +1,6 @@
 import { ModulePart } from "@/app/types";
 import { useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
 
 export interface ModulePartDisplayProps {
     part: ModulePart
@@ -8,6 +9,7 @@ export interface ModulePartDisplayProps {
 
 export function ModulePartDisplay(props: ModulePartDisplayProps) {
     const router = useRouter();
+    const { i18n, t } = useTranslation();
     function handleClick() {
         router.push("/moduleParts/" + props.part.stringID)
         
@@ -20,7 +22,7 @@ export function ModulePartDisplay(props: ModulePartDisplayProps) {
             <div className="col-span-4 border-l border-black p-1 bg-gray-200">{props.part.name}</div>
             <div className="p-1 bg-gray-300">ECTS</div>
             <div className="col-span-4 border-l border-black p-1 bg-gray-300">{props.part.ects}</div>
-            <div className="p-1 bg-gray-200">Kind</div>
+            <div className="p-1 bg-gray-200">{t('examKind')}</div>
             <div className="col-span-4 border-l border-black p-1 bg-gray-200">{props.part.kind}</div>
         </div></div>
 

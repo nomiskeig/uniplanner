@@ -13,7 +13,29 @@ i18n.use(initReactI18next).init({
                 inDepthModule: "in depth module",
                 pickedIn: "Picked in",
                 supplementaryModule: "supplementary module",
-                pickArea: "Pick area"
+                pickArea: "Pick area",
+                moduleOverview: "Module overview",
+                category: "Category",
+                allCategegories: "All categories",
+                anyTurnus: "Any turnus",
+                responsible: "Responsible",
+                partOf: "Part of",
+                examKind: "Kind of exam",
+                qualificationGoals: "Qualification goals",
+                content: "Content",
+                successControl: "Success control",
+                requirements: "Requirements",
+                recommendations: "Recommendations",
+                module: "Module",
+                moduleParts: "Module parts",
+                modulePart: "Module part",
+                noRecommendations: "No recommendations",
+                noRequirements: "No requirements",
+                noInfo: "No information",
+                courses: "Courses",
+                type: "Type",
+                hello: "Hello"
+
 
             }
         },
@@ -21,8 +43,30 @@ i18n.use(initReactI18next).init({
             translation: {
                 inDepthModule: "Vertiefungsfach",
                 pickedIn: "Gewählt in",
-                supplementaryModule: "Wahlbereich",
-                pickArea: "Wahlbereich"
+                supplementaryModule: "Ergänzungsfach",
+                pickArea: "Wahlbereich",
+                moduleOverview: "Modulübersicht",
+                category: "Kategorie",
+                allCategegories: "Alle Kategorien",
+                anyTurnus: "Jeder Turnus",
+                responsible: "Verantwortlich",
+                partOf: "Bestandteil von",
+                examKind: "Art der Prüfungsleistung",
+                qualificationGoals: "Qualifizierungsziele",
+                content: "Inhalt",
+                successControl: "Erfolgskontrollen",
+                requirements: "Voraussetzungen",
+                recommendations: "Empfehlungen",
+                module: "Modul",
+                moduleParts: "Teilleistungen",
+                modulePart: "Teilleistung",
+                noRecommendations: "Keine Empfehlungen",
+                noRequirements: "Keine Voraussetzungen",
+                noInfo: "Keine Information",
+                courses: "Lehrveranstaltungen",
+                type: "Typ",
+                hello: "Hallo"
+
             }
         }
 
