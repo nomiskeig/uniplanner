@@ -18,16 +18,19 @@ import de.giek.uniplanner.dto.CategoryDTO;
 import de.giek.uniplanner.dto.CategoryTypeDTO;
 import de.giek.uniplanner.dto.ListDataDTO;
 import de.giek.uniplanner.dto.ModuleDTO;
+import de.giek.uniplanner.dto.ModulePartDTO;
 import de.giek.uniplanner.dto.StudyCourseDTO;
 import de.giek.uniplanner.dto.SuccessAndMessageDTO;
 import de.giek.uniplanner.model.CategoryEntity;
 import de.giek.uniplanner.model.CategoryTypeEntity;
 import de.giek.uniplanner.model.MappingEntity;
 import de.giek.uniplanner.model.ModuleEntity;
+import de.giek.uniplanner.model.ModulePartEntity;
 import de.giek.uniplanner.model.StudyCourseEntity;
 import de.giek.uniplanner.repository.CategoryRepo;
 import de.giek.uniplanner.repository.CategoryTypeRepo;
 import de.giek.uniplanner.repository.MappingRepo;
+import de.giek.uniplanner.repository.ModulePartRepo;
 import de.giek.uniplanner.repository.ModuleRepo;
 import de.giek.uniplanner.repository.StudyCourseRepo;
 
@@ -48,6 +51,9 @@ public class DataController {
 
     @Autowired
     private MappingRepo mappingRepo;
+
+    @Autowired
+    private ModulePartRepo modulePartRepo;
 
     @GetMapping("/studyCourses")
     public ResponseEntity<ListDataDTO<StudyCourseEntity>> getStudyCourses() {
@@ -72,6 +78,21 @@ public class DataController {
         }
         ModuleDTO moduledto = new ModuleDTO(maybeModule.get(), true);
         return new ResponseEntity<ModuleDTO>(moduledto, HttpStatus.OK);
+
+    }
+
+    @GetMapping("/moduleParts/{stringModulePartID}")
+    public ResponseEntity getModuleParts(@PathVariable String stringModulePartID) {
+        Optional<ModulePartEntity> maybeModule = modulePartRepo.findByStringID(stringModulePartID);
+        if (maybeModule.isEmpty()) {
+            SuccessAndMessageDTO res = new SuccessAndMessageDTO();
+            res.setMessage("There is no module part with id " + stringModulePartID + ".");
+            res.setSuccess(false);
+            return new ResponseEntity<SuccessAndMessageDTO>(res, HttpStatus.CONFLICT);
+
+        }
+        ModulePartDTO moduledto = new ModulePartDTO(maybeModule.get());
+        return new ResponseEntity<ModulePartDTO>(moduledto, HttpStatus.OK);
 
     }
 

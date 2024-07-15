@@ -12,15 +12,35 @@ export interface Module {
     content: String,
     qualificationGoals: String,
     recommendations: String | null
+    parts: ModulePart[];
 
 
 
+}
+export interface ModulePart {
+    stringID: string,
+    kind: string,
+    ects: number,
+    successControl: string,
+    name: string,
+    recommendations: string,
+    requirements: string,
+    courses: Course[]
 }
 export interface PickedCategories {
     indepth1Category: Category,
     indepth2Category: Category,
     supplementaryCategory: Category
     
+}
+export interface Course {
+    semester: string,
+    name: string,
+    type: string,
+    responsible: string,
+    sws: string,
+    link: string
+
 }
 
 export interface PickedModule {
@@ -52,13 +72,6 @@ export interface Category {
 export type CompulsoryPartID = string
 export type ModuleID = string
 
-export interface PartPerformance {
-    courses: Course[]
-
-};
-export interface Course {
-    name: String
-}
 
 
 export interface InDepthModule {

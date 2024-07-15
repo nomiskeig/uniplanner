@@ -39,6 +39,8 @@ public class SecurityConfig {
             authorizeRequests.requestMatchers("/api/getSomething").permitAll();
             authorizeRequests.requestMatchers("/api/v1/data/*").permitAll();
             authorizeRequests.requestMatchers("/api/v1/data/modules/*").permitAll();
+
+            authorizeRequests.requestMatchers("/api/v1/data/moduleParts/*").permitAll();
             authorizeRequests.requestMatchers("/api-docs/*").permitAll();
             authorizeRequests.requestMatchers("/api-docs").permitAll();
             authorizeRequests.requestMatchers("/api-docs-ui").permitAll();

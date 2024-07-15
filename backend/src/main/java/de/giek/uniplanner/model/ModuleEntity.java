@@ -39,7 +39,18 @@ public class ModuleEntity {
 		return type;
 	}
 
-    public void setType(CategoryTypeEntity type) {
+    @ManyToMany(mappedBy ="modules")
+    private Set<ModulePartEntity> parts;
+
+    public Set<ModulePartEntity> getParts() {
+		return parts;
+	}
+
+	public void setParts(Set<ModulePartEntity> parts) {
+		this.parts = parts;
+	}
+
+	public void setType(CategoryTypeEntity type) {
 		this.type = type;
 	}
 

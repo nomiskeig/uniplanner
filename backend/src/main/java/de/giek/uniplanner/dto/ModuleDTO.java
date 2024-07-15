@@ -2,9 +2,11 @@ package de.giek.uniplanner.dto;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import de.giek.uniplanner.model.CategoryEntity;
 import de.giek.uniplanner.model.ModuleEntity;
+import de.giek.uniplanner.model.ModulePartEntity;
 
 public class ModuleDTO {
     private int moduleID;
@@ -14,16 +16,18 @@ public class ModuleDTO {
 
 	private int ects;
     private Set<CategoryDTO> categories;
+    private Set<ModulePartDTO> parts;
     private String turnus;
-    private String responsible;
-    private String requirements;
+
+
+	private String responsible;
+
+	private String requirements;
     private String recommendations;
     private String content;
     private String successControl;
-
-	private String qualificationGoals;
-
-	public ModuleDTO(ModuleEntity me, boolean addCategories) {
+    private String qualificationGoals;
+    public ModuleDTO(ModuleEntity me, boolean addCategories) {
         this.moduleID = me.getModule_id();
         this.stringID = me.getModule_string_id();
         this.name = me.getName();
@@ -35,12 +39,22 @@ public class ModuleDTO {
         this.content = me.getContent();
         this.successControl = me.getSuccessControl();
         this.qualificationGoals = me.getQualificationGoals();
+        this.parts = me.getParts().stream().map(p -> new ModulePartDTO(p)).collect(Collectors.toSet());
         if (addCategories) {
             this.categories = mapEntitiesToDTOs(me.getCategories());
         } else {
             this.categories = new HashSet<>();
         }
     }
+
+	public Set<ModulePartDTO> getParts() {
+		return parts;
+	}
+
+	public void setParts(Set<ModulePartDTO> parts) {
+		this.parts = parts;
+	}
+
 
 	public String getSuccessControl() {
 		return successControl;

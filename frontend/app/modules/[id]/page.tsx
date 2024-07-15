@@ -1,6 +1,7 @@
 "use client"
 
 import { Module } from "@/app/types"
+import { ModulePartDisplay } from "@/components/ModulePartDisplay"
 import { useEffect, useState } from "react"
 
 export default function Page({ params }: { params: { id: string } }) {
@@ -13,11 +14,11 @@ export default function Page({ params }: { params: { id: string } }) {
     if (module == null) {
         return <div>Loading...</div>
     }
-    console.log(module)
 
     return <div className="p-5 ">
+        <div className="text-2xl mb-4">Module</div>
         {params.id}
-        <div className="mt-2 mb-10 text-3xl font-bold">{module.name.replaceAll("\n", "test")}</div>
+        <div className="mt-2 mb-10 text-3xl font-bold">{module.name}</div>
         
         <div className="grid grid-cols-5 border-2 border-black w-2/3">
             <div className="p-1 bg-gray-200">Turnus</div>
@@ -32,8 +33,11 @@ export default function Page({ params }: { params: { id: string } }) {
             </div>
         </div>
 
-        <div className="mt-8 mb-5 text-2xl font-bold">Courses</div>
-        <div>{module.compulsoryParts}</div>
+        <div className="mt-8 mb-5 text-2xl font-bold">Parts</div>
+
+        <div>
+            {module.parts.map((p,i) => <ModulePartDisplay key={i} part={p}></ModulePartDisplay>)}
+        </div>
 
         <div className="mt-8 mb-5 text-2xl font-bold whitespace-pre-line">Qualification goals</div>
         <div className="whitespace-pre-line">{module.qualificationGoals}</div>
