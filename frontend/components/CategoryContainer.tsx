@@ -1,6 +1,7 @@
 import { Category, Module } from "@/app/types"
 import { createClass } from "@/utils"
 import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table"
+import Link from "next/link"
 
 export interface CategoryContainerProps {
     name: string
@@ -20,7 +21,9 @@ function getBackgroundColor(currentECTS: number, min: number, max: number) {
 const columnHelper = createColumnHelper<Module>()
 const columns = [
     columnHelper.accessor('name', {
-        cell: info => info.getValue(),
+        cell: info =>{ 
+                return <Link href={`/modules/${info.row.original.stringID}`}>{info.getValue()}</Link>
+        }
 
     }),
     columnHelper.accessor('ects', {
