@@ -10,7 +10,7 @@ export function NotificationDisplay(props: NotificationDisplayProps) {
     function getText(not: Notification) {
         switch (not.type) {
             case "Error": return "Error: " + not.text
-            case "Success": return "Success: "
+            case "Success": return "Success: " + not.text
             case "Warning": return "Warning: " + not.text
         }
 

@@ -47,10 +47,24 @@ public class AuthController {
             response.setSuccess(false);
             return new ResponseEntity<SuccessAndMessageDTO>(response, HttpStatus.BAD_REQUEST);
         }
+        System.out.println("username: " + registerDTO.getUsername());
 
+        String password = registerDTO.getPassword();
+        String username = registerDTO.getUsername();
+        if (username.equals("")) {
+            response.setMessage("Username can not be empty.");
+            response.setSuccess(false);
+            return new ResponseEntity<SuccessAndMessageDTO>(response, HttpStatus.BAD_REQUEST);
+        }
+        if (password.length() < 5) {
+            response.setMessage("Password too short. Five characters are required.");
+            response.setSuccess(false);
+            return new ResponseEntity<SuccessAndMessageDTO>(response, HttpStatus.BAD_REQUEST);
+
+        }
         UserEntity userEntity = new UserEntity();
-        userEntity.setUsername(registerDTO.getUsername());
-        userEntity.setPassword(passwordEncoder.encode(registerDTO.getPassword()));
+        userEntity.setUsername(username);
+        userEntity.setPassword(passwordEncoder.encode(password));
 
         userRepo.save(userEntity);
         response.setMessage("User created successfully");
