@@ -30,7 +30,7 @@ export default function Page() {
     const { isLoggedIn, user } = useLogin("/modules", false);
 
     const { i18n, t } = useTranslation();
-    const { pickedModules } = useGetPickedModules(user.token);
+    const { pickedModules, reloadPickedModules } = useGetPickedModules(user.token);
     const columns = [
 
 
@@ -103,7 +103,7 @@ export default function Page() {
                             "categoryID": categoryOfModule!.categoryID,
                             "moduleID": module.moduleID
                         }),
-                    })
+                    }).then(() => reloadPickedModules())
                 }
             }]
 
@@ -124,7 +124,7 @@ export default function Page() {
                             "categoryID": cat.categoryID,
                             "moduleID": module.moduleID
                         }),
-                    }).then()
+                    }).then(() => reloadPickedModules())
                 }
 
             }

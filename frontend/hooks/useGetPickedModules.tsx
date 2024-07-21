@@ -6,8 +6,15 @@ export const useGetPickedModules = (token: string) => {
     const [error, setError] = useState<null | string>(null);
     const [pickedModules, setPickedModules] = useState<PickedModule[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [re, setRe] = useState<number>(0);
 
 
+    function reload() {
+        console.log("reloading")
+        setRe(re+1);
+
+
+    }
     useEffect(() => {
         if (token == "") {
             return
@@ -22,8 +29,8 @@ export const useGetPickedModules = (token: string) => {
                 setIsLoading(false)
             })
             .catch(err => setError(err.message))
-    }, [token])
+    }, [token, re])
 
-    return { pickedModulesError: error, pickedModules, isPickedModulesLoading: isLoading }
+    return { reloadPickedModules: reload, pickedModulesError: error, pickedModules, isPickedModulesLoading: isLoading }
 
 }
