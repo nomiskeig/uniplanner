@@ -68,7 +68,7 @@ export default function Page() {
         }),
         columnHelper.display({
             id: 'actions',
-            cell: props => <ButtonMenu options={getButtonMenuOptions(props.row.original)}></ButtonMenu>
+            cell: props => <div><ButtonMenu options={getButtonMenuOptions(props.row.original)}></ButtonMenu></div>
         })
 
     ]
@@ -311,8 +311,8 @@ export default function Page() {
             <tbody>
                 {table.getRowModel().rows.map((row, index) => (
                     <tr key={row.id}>
-                        {row.getVisibleCells().map(cell => (
-                            <td className={`${getRowColor(index, row.getValue("id"))} pl-2 border-l border-gray-500`} key={cell.id}>
+                        {row.getVisibleCells().map((cell,columnIndex) => (
+                            <td className={`${getRowColor(index, row.getValue("id"))} ${columnIndex == 3 ? "" : "pl-2"} border-l border-gray-500`} key={cell.id}>
                                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
                             </td>
                         ))}

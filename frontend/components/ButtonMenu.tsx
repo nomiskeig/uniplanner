@@ -25,7 +25,7 @@ export function ButtonMenu(props: ButtonMenuProps) {
     }
 
     return <div>
-        <div className="cursor-pointer" onClick={() => setExpanded(!expanded)}><FontAwesomeIcon icon={faEllipsisVertical} /></div>
+        <div className="cursor-pointer w-[14px] flex h-[100%] justify-center" onClick={() => setExpanded(!expanded)}><FontAwesomeIcon icon={faEllipsisVertical} /></div>
         {expanded ? <div ref={ref} className="absolute right-10 border-2 border-black rounded">
             {props.options.map((option, index) => {
                 return <div className="cursor-pointer bg-gray-200 hover:bg-gray-300 right-10 p-1" key={index} onClick={() => handleClick(option)}>{option.text}</div>
