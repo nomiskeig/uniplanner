@@ -1,4 +1,5 @@
 package de.giek.uniplanner.controller;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -52,7 +53,7 @@ public class PlanController {
             @RequestBody CategoryPickDTO picks) {
 
         UserEntity user = userRepo.findByUsername(auth.getName()).orElseThrow();
-        UserCategoryPickEntity ucpe = ucpRepo.findByUser(user);
+        Optional<UserCategoryPickEntity> maybeUcpe = ucpRepo.findByUser(user);
         Optional<CategoryEntity> maybeIndepth1 = categoryRepo.findById(picks.getIndepth1());
         if (maybeIndepth1.isEmpty()) {
             SuccessAndMessageDTO res = new SuccessAndMessageDTO();
@@ -84,33 +85,34 @@ public class PlanController {
             return new ResponseEntity<SuccessAndMessageDTO>(res, HttpStatus.CONFLICT);
 
         }
-
-
-        
+        UserCategoryPickEntity ucpe;
+        if (maybeUcpe.isEmpty()) {
+            ucpe = new UserCategoryPickEntity();
+        } else {
+            ucpe = maybeUcpe.get();
+        }
 
         // delete picks of the changed categories
-        if (ucpe.getIndepth1().getCategory_id() != picks.getIndepth1()) {
+        if (maybeUcpe.isPresent() && ucpe.getIndepth1().getCategory_id() != picks.getIndepth1()) {
             // indepth1 changed
             umpRepo.deleteByCategoryID(ucpe.getIndepth1().getCategory_id());
         }
-        if (ucpe.getIndepth2().getCategory_id() != picks.getIndepth2()) {
+        if (maybeUcpe.isPresent() && ucpe.getIndepth2().getCategory_id() != picks.getIndepth2()) {
             // indepth2 changed
             umpRepo.deleteByCategoryID(ucpe.getIndepth2().getCategory_id());
         }
-        if (ucpe.getSupplementary().getCategory_id() != picks.getSupplementary()) {
+        if (maybeUcpe.isPresent() && ucpe.getSupplementary().getCategory_id() != picks.getSupplementary()) {
             // supplementary changed
             umpRepo.deleteByCategoryID(ucpe.getSupplementary().getCategory_id());
         }
         CategoryEntity indepth1 = maybeIndepth1.get();
         CategoryEntity indepth2 = maybeIndepth2.get();
-
         CategoryEntity supplementary = maybeSupplementary.get();
         ucpe.setIndepth1(indepth1);
         ucpe.setIndepth2(indepth2);
         ucpe.setSupplementary(supplementary);
 
         ucpRepo.save(ucpe);
-
 
         SuccessAndMessageDTO res = new SuccessAndMessageDTO();
         res.setMessage("Success");
@@ -127,8 +129,11 @@ public class PlanController {
         }
         UserEntity user = maybeUser.get();
 
-        UserCategoryPickEntity ucpe = ucpRepo.findByUser(user);
-        UserCategoryPickDTO dto = new UserCategoryPickDTO(ucpe);
+        Optional<UserCategoryPickEntity> maybeUcpe = ucpRepo.findByUser(user);
+        UserCategoryPickDTO dto  = null;
+        if (maybeUcpe.isPresent()) {
+         dto = new UserCategoryPickDTO(maybeUcpe.get());
+        }
         return new ResponseEntity<UserCategoryPickDTO>(dto, HttpStatus.OK);
 
     }
@@ -200,7 +205,7 @@ public class PlanController {
             return new ResponseEntity<SuccessAndMessageDTO>(res, HttpStatus.CONFLICT);
         }
         UserModulePickEntity umpe = maybeUmpe.get();
-         umpRepo.delete(umpe);
+        umpRepo.delete(umpe);
         SuccessAndMessageDTO res = new SuccessAndMessageDTO();
         res.setMessage("Success");
         res.setSuccess(true);

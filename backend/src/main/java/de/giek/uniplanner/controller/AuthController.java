@@ -16,8 +16,10 @@ import org.springframework.web.bind.annotation.RestController;
 import de.giek.uniplanner.dto.UserAuthDTO;
 import de.giek.uniplanner.dto.LoginResponseDTO;
 import de.giek.uniplanner.dto.SuccessAndMessageDTO;
+import de.giek.uniplanner.model.CategoryEntity;
 import de.giek.uniplanner.model.UserCategoryPickEntity;
 import de.giek.uniplanner.model.UserEntity;
+import de.giek.uniplanner.repository.CategoryRepo;
 import de.giek.uniplanner.repository.UserCategoryPickRepo;
 import de.giek.uniplanner.repository.UserRepo;
 import de.giek.uniplanner.security.JwtGenerator;
@@ -36,6 +38,8 @@ public class AuthController {
     @Autowired
     private UserCategoryPickRepo ucpRepo;
 
+    @Autowired
+    private CategoryRepo catRepo;
     @Autowired
     private PasswordEncoder passwordEncoder;
 
@@ -66,9 +70,21 @@ public class AuthController {
         userEntity.setUsername(username);
         userEntity.setPassword(passwordEncoder.encode(password));
 
-        userRepo.save(userEntity);
+
+        UserCategoryPickEntity ucpe = new UserCategoryPickEntity();
+        CategoryEntity indepth1 = catRepo.findById(2).orElseThrow();
+        CategoryEntity indepth2 = catRepo.findById(3).orElseThrow();
+        CategoryEntity supplemenary = catRepo.findById(20).orElseThrow();
+        ucpe.setIndepth1(indepth1);
+        ucpe.setIndepth2(indepth2);
+        ucpe.setSupplementary(supplemenary);
+
+        UserEntity res = userRepo.save(userEntity);
+        ucpe.setUser(userEntity);
+        ucpRepo.save(ucpe);
         response.setMessage("User created successfully");
         response.setSuccess(true);
+
         return new ResponseEntity<SuccessAndMessageDTO>(response, HttpStatus.CREATED);
 
     }
