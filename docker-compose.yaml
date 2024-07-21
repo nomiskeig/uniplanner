@@ -1,0 +1,45 @@
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+
+    
+  backend:
+    depends_on:
+      db:
+        condition: service_started
+    environment:
+      DATABASE_PASSWORD: ThisIsAStrongPassword123
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    secrets:
+      - db_password
+
+
+      
+    
+    
+  db:
+    build:
+      context: ./database
+      dockerfile: Dockerfile
+    environment:
+      MARIADB_ROOT_PASSWORD_FILE: /run/secrets/db_password
+      MARIADB_DATABASE: uniplanner 
+    ports:
+      - "3307:3306"
+
+    secrets:
+      - db_password
+
+
+
+secrets:
+  db_password:
+    file: db_password.txt

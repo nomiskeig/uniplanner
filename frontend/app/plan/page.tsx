@@ -13,6 +13,9 @@ import { useGetPickedModules } from "@/hooks/useGetPickedModules";
 import { useLogin } from "@/hooks/useLogin";
 import { useNotificiations } from "@/hooks/useNotifications";
 
+function compareCategories(a: Category, b: Category) {
+    return a.name.localeCompare(b.name)
+}
 
 export default function Page() {
 
@@ -26,7 +29,7 @@ export default function Page() {
         return <div>Loading</div>
     }
 
-    const indepth1PickerOptions: DropdownOption<Category>[] = categoryTypes.find(type => type.name == "inDepth")!.categories.map(cat => {
+    const indepth1PickerOptions: DropdownOption<Category>[] = categoryTypes.find(type => type.name == "inDepth")!.categories.sort(compareCategories).map(cat => {
         return {
             name: cat.name,
             element: cat,
@@ -48,7 +51,6 @@ export default function Page() {
                 }
                 ).then(res => {
                     if (res.ok) {
-                        console.log("wtf")
                         setPickedCategories({
                             indepth1Category: cat,
                             indepth2Category: pickedCategories.indepth2Category,
@@ -56,13 +58,16 @@ export default function Page() {
                         })
 
                     }
+                    else {
+                            res.json().then(text => addNotification(text.message, "Error"))
+                    }
                 })
             }
 
 
         }
     })
-    const indepth2PickerOptions: DropdownOption<Category>[] = categoryTypes.find(type => type.name == "inDepth")!.categories.map(cat => {
+    const indepth2PickerOptions: DropdownOption<Category>[] = categoryTypes.find(type => type.name == "inDepth")!.categories.sort(compareCategories).map(cat => {
         return {
             name: cat.name,
             element: cat,
@@ -102,7 +107,7 @@ export default function Page() {
 
         }
     })
-    const supplementaryPickerOptions: DropdownOption<Category>[] = categoryTypes.find(type => type.name == "supplementary")!.categories.map(cat => {
+    const supplementaryPickerOptions: DropdownOption<Category>[] = categoryTypes.find(type => type.name == "supplementary")!.categories.sort(compareCategories).map(cat => {
         return {
             name: cat.name,
             element: cat,
@@ -145,15 +150,15 @@ export default function Page() {
     const pickedInDepth2Modules = pickedModules.filter(pm => pm.category.categoryID == inDepth2Cat.categoryID).map(pm => pm.module)
     const pickedSupplementaryModules = pickedModules.filter(pm => pm.category.categoryID == supplementaryCat.categoryID).map(pm => pm.module)
     const inDepth1Default = indepth1PickerOptions.findIndex(option => option.element.categoryID == pickedCategories.indepth1Category.categoryID)
-    const inDepth2Default = indepth1PickerOptions.findIndex(option => option.element.categoryID == pickedCategories.indepth2Category.categoryID)
+    const inDepth2Default = indepth2PickerOptions.findIndex(option => option.element.categoryID == pickedCategories.indepth2Category.categoryID)
     const supplementaryDefault = supplementaryPickerOptions.findIndex(option => option.element.categoryID == pickedCategories.supplementaryCategory.categoryID)
     return <div>
         <div>Plan</div>
         <div>
             <div className="p-2">
-                <Dropdown setNewItem={false} title={`${t("pickedIn")} ${t("inDepthModule")} 1`} options={indepth1PickerOptions} defaultIndex={inDepth1Default} ></Dropdown>
-                <Dropdown setNewItem={false} title={`${t("pickedIn")} ${t("inDepthModule")} 2`} options={indepth2PickerOptions} defaultIndex={inDepth2Default} ></Dropdown>
-                <Dropdown setNewItem={false} title={`${t("pickedIn")} ${t("supplementaryModule")}`} options={supplementaryPickerOptions} defaultIndex={supplementaryDefault} ></Dropdown>
+                <Dropdown title={`${t("pickedIn")} ${t("inDepthModule")} 1`} options={indepth1PickerOptions} defaultIndex={inDepth1Default} ></Dropdown>
+                <Dropdown title={`${t("pickedIn")} ${t("inDepthModule")} 2`} options={indepth2PickerOptions} defaultIndex={inDepth2Default} ></Dropdown>
+                <Dropdown title={`${t("pickedIn")} ${t("supplementaryModule")}`} options={supplementaryPickerOptions} defaultIndex={supplementaryDefault} ></Dropdown>
             </div>
             <div className="grid grid-cols-2">
                 <CategoryContainer

@@ -23,8 +23,8 @@ export function NotificationDisplay(props: NotificationDisplayProps) {
         }
     }
     return <div className="absolute right-[30px] top-[30px] w-[500px] rounded flex flex-col gap-4">
-        {notificationContext.notifications.map(not => {
-            return <div className={`flex p-2 rounded ${getColor(not)}`}>
+        {notificationContext.notifications.map((not,index) => {
+            return <div key={index} className={`flex p-2 rounded ${getColor(not)}`}>
                 <div className="grow">{getText(not)}</div>
                 <div className="cursor-pointer"onClick={() => notificationContext.deleteNotification(not)}>x</div>
                 </div>

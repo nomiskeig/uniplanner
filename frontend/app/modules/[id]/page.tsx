@@ -11,7 +11,7 @@ export default function Page({ params }: { params: { id: string } }) {
 
     useEffect(() => {
         fetch(`http://localhost:8080/api/v1/data/modules/${params.id}`).then((res => res.json())).then((data) => {console.log(data); setModule(data)}).catch(err => console.log(err))
-    },[])
+    },[params.id])
     
     if (module == null) {
         return <div>Loading...</div>

@@ -39,7 +39,6 @@ export default function RootLayout({
     function addNotification(text: string, type: NotificationType) {
         setNotifications([...notifications, { text: text, type: type, id: notificationCounter }])
         setNotificationCounter(notificationCounter + 1);
-        console.log("added notificiatoin")
 
     }
     function removeNotification(notification: Notification) {

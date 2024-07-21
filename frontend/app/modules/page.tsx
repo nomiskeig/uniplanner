@@ -10,6 +10,7 @@ import { ButtonMenu, ButtonMenuOption } from "@/components/ButtonMenu.tsx";
 import { useGetPickedModules } from "@/hooks/useGetPickedModules.tsx";
 import { useLogin } from "@/hooks/useLogin.tsx";
 import { useTranslation } from "react-i18next";
+import { API } from "../global.tsx";
 
 
 
@@ -41,8 +42,8 @@ export default function Page() {
         columnHelper.accessor('ects', {
             cell: info => info.getValue(),
             id: "ects",
-            header: e =>   <span>ECTS</span>
-            
+            header: e => <span>ECTS</span>
+
         }),
         columnHelper.accessor('turnus', {
             cell: info => info.getValue(),
@@ -112,7 +113,7 @@ export default function Page() {
         return possibleCategories.map((cat) => {
             return {
                 text: "Add to " + cat.name, action: () => {
-                    fetch("http://localhost:8080/api/v1/plan/addModulePick", {
+                    fetch(API + "/api/v1/plan/addModulePick", {
                         method: "POST",
                         headers: {
                             'Authorization': "Bearer " + user.token,
@@ -133,13 +134,13 @@ export default function Page() {
 
 
     useEffect(() => {
-        fetch(`http://localhost:8080/api/v1/data/modules?studyCourseID=${studyCourse}`).then((res => res.json())).then((data) => setModules(data.data)).catch(err => console.log(err))
-        fetch(`http://localhost:8080/api/v1/data/categories?studyCourseID=${studyCourse}`).then((res => res.json())).then((data) => setCategories(data.data)).catch(err => console.log(err))
-        fetch(`http://localhost:8080/api/v1/data/categoryTypes?studyCourseID=${studyCourse}`).then((res => res.json())).then((data) => setCategoryTypes(data.data)).catch(err => console.log(err))
-    }, [])
+        fetch(API + `/api/v1/data/modules?studyCourseID=${studyCourse}`).then((res => res.json())).then((data) => setModules(data.data)).catch(err => console.log(err))
+        fetch(API + `/api/v1/data/categories?studyCourseID=${studyCourse}`).then((res => res.json())).then((data) => setCategories(data.data)).catch(err => console.log(err))
+        fetch(API + `/api/v1/data/categoryTypes?studyCourseID=${studyCourse}`).then((res => res.json())).then((data) => setCategoryTypes(data.data)).catch(err => console.log(err))
+    }, [studyCourse])
     useEffect(() => {
         if (user.isLoggedIn) {
-            fetch('http://localhost:8080/api/v1/plan/getCategoryPicks', {
+            fetch(API + '/api/v1/plan/getCategoryPicks', {
                 method: 'GET', headers: {
                     'Authorization': "Bearer " + user.token
                 }
@@ -147,7 +148,7 @@ export default function Page() {
 
         }
 
-    }, [])
+    }, [user.isLoggedIn, user.token])
 
 
     const turnusPossibilities: Turnus[] = [];
@@ -161,9 +162,9 @@ export default function Page() {
         return false;
 
     }
-    for (let module of modules) {
-        if (!isIncluded(turnusPossibilities, module)) {
-            turnusPossibilities.push({ name: module.turnus })
+    for (const m of modules) {
+        if (!isIncluded(turnusPossibilities, m)) {
+            turnusPossibilities.push({ name: m.turnus })
         }
     }
     const inDepthPickerOptions: DropdownProps<Category> = {
@@ -211,7 +212,7 @@ export default function Page() {
 
 
     }
-    const  getModulesOfCategoryType = (type: CategoryType) => {
+    const getModulesOfCategoryType = (type: CategoryType) => {
         const catOfType = type.categories.map(c => c.categoryID);
         console.log(catOfType)
         console.log(modules)

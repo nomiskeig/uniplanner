@@ -12,7 +12,7 @@ export default function Page({ params }: { params: { id: string } }) {
 
     useEffect(() => {
         fetch(`http://localhost:8080/api/v1/data/moduleParts/${params.id}`).then((res => res.json())).then((data) => setModulePart(data)).catch(err => console.log(err))
-    }, [])
+    }, [params.id])
 
     if (modulePart == null) {
         return <div>Loading...</div>
