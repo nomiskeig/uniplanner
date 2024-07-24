@@ -5,16 +5,17 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 
 import { IUserContext, UserContext } from '../components/UserContext'
-import React from "react";
-import { User } from "./types";
+import React, { useEffect } from "react";
+import { Semester, User } from "./types";
 import Link from "next/link";
 const inter = Inter({ subsets: ["latin"] });
 
 import "../i18n"
-import TopBar from "@/components/TopBar";
+import TopBar, { getSemesterFromID } from "@/components/TopBar";
 import { useRouter } from "next/navigation";
 import { NotificationType, Notification, NotificationContext } from "@/components/NotificationContext";
 import { NotificationDisplay } from "@/components/NotificationDisplay";
+import { SemesterContext } from "@/components/SemesterContext";
 
 export default function RootLayout({
 
@@ -23,17 +24,30 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     const router = useRouter();
-    let [user, setUser] = React.useState<User>({ username: "", token: "", isLoggedIn: false })
+    let [user, setUser] = React.useState<User>({
+        username: "", token: "", isLoggedIn: false,
+    })
     let [notifications, setNotifications] = React.useState<Notification[]>([])
     let [notificationCounter, setNotificationCounter] = React.useState<number>(0);
+    let [semester, setSemester] = React.useState<Semester | null>(null)
+
+    useEffect(() => {
+        if (!user.isLoggedIn) {
+            return;
+        }
+        fetch('http://localhost:8080/api/v1/plan/startingSemester', {
+            method: 'GET', headers: {
+                'Authorization': "Bearer " + user.token
+            }
+        }).then(res => res.json()).then(data => {console.log(data); setSemester(getSemesterFromID(data.message))}
+        )
+
+    }, [user])
     function handleLogout() {
         setUser({ username: "", token: "", isLoggedIn: false });
         document.cookie = "token=;expires=Thu, 01 Jan 1970"
         document.cookie = "username=;expires=Thu, 01 Jan 1970"
         router.push("/modules")
-
-
-
     }
 
     function addNotification(text: string, type: NotificationType) {
@@ -44,16 +58,20 @@ export default function RootLayout({
     function removeNotification(notification: Notification) {
         setNotifications(notifications.filter(n => n.id !== notification.id))
     }
+    function setStartingSemster(s: Semester) {
+
+    }
 
     return (
         <html lang="en">
             <body className={inter.className}>
-                <UserContext.Provider value={{ user: user, setUser: setUser }}>
+                <UserContext.Provider value={{ user: user, setUser: setUser, setSemester: setStartingSemster }}>
                     <NotificationContext.Provider value={{ notifications: notifications, addNotification: addNotification, deleteNotification: removeNotification }}>
+                        <SemesterContext.Provider value={{ currentSemester: semester, setSemester: s => setSemester(s) }}>
                         <TopBar user={user} handleLogout={handleLogout}></TopBar>
                         <NotificationDisplay>
                         </NotificationDisplay>
-                        {children}
+                        {children}</SemesterContext.Provider>
                     </NotificationContext.Provider>
                 </UserContext.Provider>
             </body>

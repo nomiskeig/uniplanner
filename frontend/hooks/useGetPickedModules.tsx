@@ -10,7 +10,6 @@ export const useGetPickedModules = (token: string) => {
 
 
     function reload() {
-        console.log("reloading")
         setRe(re+1);
 
 

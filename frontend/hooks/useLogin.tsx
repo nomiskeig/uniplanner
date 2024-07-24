@@ -19,6 +19,7 @@ export const useLogin = ((redirectIfLoggedIn: string, redirectToLogin: boolean) 
             let username = document.cookie.match(/username=(.*)/)![1]
             userContext.setUser({ username: username, token: token, isLoggedIn: true })
             router.push(redirectIfLoggedIn)
+
         } else {
             if (redirectToLogin) {
                 router.push("/login")

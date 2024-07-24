@@ -51,7 +51,7 @@ export interface PickedModule {
 export interface User {
     token: string,
     username: string,
-    isLoggedIn: boolean
+    isLoggedIn: boolean,
 }
 
 export interface CategoryType {
@@ -67,6 +67,12 @@ export interface Category {
     minECTS: number,
     maxECTS: number
     type: CategoryType
+
+}
+
+export interface Semester {
+    id: string,
+    name: string,
 
 }
 
