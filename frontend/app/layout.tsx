@@ -11,7 +11,7 @@ import Link from "next/link";
 const inter = Inter({ subsets: ["latin"] });
 
 import "../i18n"
-import TopBar, { getSemesterFromID } from "@/components/TopBar";
+import TopBar from "@/components/TopBar";
 import { useRouter } from "next/navigation";
 import { NotificationType, Notification, NotificationContext } from "@/components/NotificationContext";
 import { NotificationDisplay } from "@/components/NotificationDisplay";
@@ -31,6 +31,19 @@ export default function RootLayout({
     let [notificationCounter, setNotificationCounter] = React.useState<number>(0);
     let [semester, setSemester] = React.useState<Semester | null>(null)
 
+    const possibleSemesterIDs: string[] = [
+         'W2024', 'S2025', 'W2026'
+    ]
+    const possibleSemesters: Semester[] = possibleSemesterIDs.map(s => getSemesterFromID(s))
+
+    function getSemesterFromID(id: string): Semester {
+        const name = id.at(0) == "W" ? "Winter " + id.substring(1) : "Summer " + id.substring(1);
+        return {
+            name: name,
+            id: id
+        }
+
+    }
     useEffect(() => {
         if (!user.isLoggedIn) {
             return;
@@ -39,7 +52,7 @@ export default function RootLayout({
             method: 'GET', headers: {
                 'Authorization': "Bearer " + user.token
             }
-        }).then(res => res.json()).then(data => {console.log(data); setSemester(getSemesterFromID(data.message))}
+        }).then(res => res.json()).then(data => { console.log(data); setSemester(getSemesterFromID(data.message)) }
         )
 
     }, [user])
@@ -67,11 +80,11 @@ export default function RootLayout({
             <body className={inter.className}>
                 <UserContext.Provider value={{ user: user, setUser: setUser, setSemester: setStartingSemster }}>
                     <NotificationContext.Provider value={{ notifications: notifications, addNotification: addNotification, deleteNotification: removeNotification }}>
-                        <SemesterContext.Provider value={{ currentSemester: semester, setSemester: s => setSemester(s) }}>
-                        <TopBar user={user} handleLogout={handleLogout}></TopBar>
-                        <NotificationDisplay>
-                        </NotificationDisplay>
-                        {children}</SemesterContext.Provider>
+                        <SemesterContext.Provider value={{ getSemesterFromID, possibleSemesters, currentSemester: semester, setSemester: s => setSemester(s) }}>
+                            <TopBar user={user} handleLogout={handleLogout}></TopBar>
+                            <NotificationDisplay>
+                            </NotificationDisplay>
+                            {children}</SemesterContext.Provider>
                     </NotificationContext.Provider>
                 </UserContext.Provider>
             </body>

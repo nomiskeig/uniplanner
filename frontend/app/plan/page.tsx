@@ -59,7 +59,7 @@ export default function Page() {
 
                     }
                     else {
-                            res.json().then(text => addNotification(text.message, "Error"))
+                        res.json().then(text => addNotification(text.message, "Error"))
                     }
                 })
             }
@@ -97,7 +97,7 @@ export default function Page() {
 
                     }
                     else {
-                            res.json().then(text => addNotification(text.message, "Error"))
+                        res.json().then(text => addNotification(text.message, "Error"))
                     }
 
                 }).catch(err => {
@@ -146,9 +146,9 @@ export default function Page() {
     const inDepth1Cat = pickedCategories.indepth1Category;
     const inDepth2Cat = pickedCategories.indepth2Category;
     const supplementaryCat = pickedCategories.supplementaryCategory
-    const pickedInDepth1Modules = pickedModules.filter(pm => pm.category.categoryID == inDepth1Cat.categoryID).map(pm => pm.module)
-    const pickedInDepth2Modules = pickedModules.filter(pm => pm.category.categoryID == inDepth2Cat.categoryID).map(pm => pm.module)
-    const pickedSupplementaryModules = pickedModules.filter(pm => pm.category.categoryID == supplementaryCat.categoryID).map(pm => pm.module)
+    const pickedInDepth1Modules = pickedModules.filter(pm => pm.category.categoryID == inDepth1Cat.categoryID).map(pm =>  ({ module: pm.module, semester: pm.semester }))
+    const pickedInDepth2Modules = pickedModules.filter(pm => pm.category.categoryID == inDepth2Cat.categoryID).map(pm => ({module: pm.module, semester: pm.semester}))
+    const pickedSupplementaryModules = pickedModules.filter(pm => pm.category.categoryID == supplementaryCat.categoryID).map(pm => ({module: pm.module, semester: pm.semester}))
     const inDepth1Default = indepth1PickerOptions.findIndex(option => option.element.categoryID == pickedCategories.indepth1Category.categoryID)
     const inDepth2Default = indepth2PickerOptions.findIndex(option => option.element.categoryID == pickedCategories.indepth2Category.categoryID)
     const supplementaryDefault = supplementaryPickerOptions.findIndex(option => option.element.categoryID == pickedCategories.supplementaryCategory.categoryID)
@@ -164,24 +164,24 @@ export default function Page() {
                 <CategoryContainer
                     name={`${t("inDepthModule")} 1`}
                     category={inDepth1Cat}
-                    modules={pickedInDepth1Modules}
+                    data={pickedInDepth1Modules}
                 ></CategoryContainer>
                 <CategoryContainer
                     name={`${t("inDepthModule")} 2`}
                     category={inDepth2Cat}
-                    modules={pickedInDepth2Modules}
+                    data={pickedInDepth2Modules}
                 ></CategoryContainer>
             </div>
             <div className="grid grid-cols-2">
                 <CategoryContainer
                     name={`${t("supplementaryModule")}`}
                     category={supplementaryCat}
-                    modules={pickedSupplementaryModules}
+                    data={pickedSupplementaryModules}
                 ></CategoryContainer>
                 <CategoryContainer
                     name={`${t("inDepthModule")} 2`}
                     category={inDepth2Cat}
-                    modules={pickedInDepth2Modules}
+                    data={pickedInDepth2Modules}
                 ></CategoryContainer>
             </div>
         </div>

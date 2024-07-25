@@ -46,7 +46,8 @@ export interface Course {
 
 export interface PickedModule {
     module: Module,
-    category: Category
+    category: Category,
+    semester: Semester | null
 }
 export interface User {
     token: string,
