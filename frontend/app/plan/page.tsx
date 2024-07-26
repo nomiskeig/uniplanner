@@ -160,7 +160,7 @@ export default function Page() {
                 <Dropdown title={`${t("pickedIn")} ${t("inDepthModule")} 2`} options={indepth2PickerOptions} defaultIndex={inDepth2Default} ></Dropdown>
                 <Dropdown title={`${t("pickedIn")} ${t("supplementaryModule")}`} options={supplementaryPickerOptions} defaultIndex={supplementaryDefault} ></Dropdown>
             </div>
-            <div className="grid grid-cols-2">
+            <div className="">
                 <CategoryContainer
                     name={`${t("inDepthModule")} 1`}
                     category={inDepth1Cat}
@@ -171,8 +171,6 @@ export default function Page() {
                     category={inDepth2Cat}
                     data={pickedInDepth2Modules}
                 ></CategoryContainer>
-            </div>
-            <div className="grid grid-cols-2">
                 <CategoryContainer
                     name={`${t("supplementaryModule")}`}
                     category={supplementaryCat}

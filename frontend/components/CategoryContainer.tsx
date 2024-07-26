@@ -30,17 +30,23 @@ export function CategoryContainer(props: CategoryContainerProps) {
     const columnHelper = createColumnHelper<ModuleWithSemester>()
     const columns = [
         columnHelper.accessor('module.name', {
+            
+            header: e => <span>Name</span>,
             cell: info => {
                 return <Link href={`/modules/${info.row.original.module.stringID}`}>{info.getValue()}</Link>
             }
 
         }),
         columnHelper.accessor('semester.name', {
+            header: e => <span>Semester</span>,
             cell: info => {
                 const options: InlineDropdownOption<Semester>[] = semesterContext.possibleSemesters.map(s => ({
                     element: s,
                     text: s.name,
-                    callback: () => {}
+                    callback: (s) => {
+                        
+
+                    }
                 }))
                 let defaultSemester: InlineDropdownOption<Semester>;
                 if (info.row.original.semester == null) {
@@ -62,6 +68,7 @@ export function CategoryContainer(props: CategoryContainerProps) {
             }
         }),
         columnHelper.accessor('module.ects', {
+            header: e => <span>ECTS</span>,
             cell: info => info.getValue()
         })
 
@@ -81,7 +88,7 @@ export function CategoryContainer(props: CategoryContainerProps) {
             <table className="table-fixed border-gray-500 border-2 w-full">
                 <thead>{table.getHeaderGroups().map(headerGroup => (
                     <tr className="border-slate-500 border-b-2 bg-gray-400" key={headerGroup.id}>
-                        {headerGroup.headers.map((header, index) => <th className={`${index == 1 ? "w-20 border-l-2 border-gray-500" : ""}`} key={header.id}>
+                        {headerGroup.headers.map((header, index) => <th className={`${index == 2 ? "w-20 border-l-2 border-gray-500" : index == 1 ? "w-48" : ""}`} key={header.id}>
                             {header.isPlaceholder
                                 ? null
                                 : flexRender(
