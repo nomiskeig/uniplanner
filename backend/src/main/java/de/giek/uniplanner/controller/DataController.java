@@ -19,6 +19,7 @@ import de.giek.uniplanner.dto.CategoryTypeDTO;
 import de.giek.uniplanner.dto.ListDataDTO;
 import de.giek.uniplanner.dto.ModuleDTO;
 import de.giek.uniplanner.dto.ModulePartDTO;
+import de.giek.uniplanner.dto.SemesterDTO;
 import de.giek.uniplanner.dto.StudyCourseDTO;
 import de.giek.uniplanner.dto.SuccessAndMessageDTO;
 import de.giek.uniplanner.model.CategoryEntity;
@@ -26,12 +27,14 @@ import de.giek.uniplanner.model.CategoryTypeEntity;
 import de.giek.uniplanner.model.MappingEntity;
 import de.giek.uniplanner.model.ModuleEntity;
 import de.giek.uniplanner.model.ModulePartEntity;
+import de.giek.uniplanner.model.SemesterEntity;
 import de.giek.uniplanner.model.StudyCourseEntity;
 import de.giek.uniplanner.repository.CategoryRepo;
 import de.giek.uniplanner.repository.CategoryTypeRepo;
 import de.giek.uniplanner.repository.MappingRepo;
 import de.giek.uniplanner.repository.ModulePartRepo;
 import de.giek.uniplanner.repository.ModuleRepo;
+import de.giek.uniplanner.repository.SemesterRepo;
 import de.giek.uniplanner.repository.StudyCourseRepo;
 
 @RestController
@@ -53,16 +56,27 @@ public class DataController {
     private MappingRepo mappingRepo;
 
     @Autowired
+    private SemesterRepo semesterRepo;
+    @Autowired
     private ModulePartRepo modulePartRepo;
-
     @GetMapping("/studyCourses")
     public ResponseEntity<ListDataDTO<StudyCourseEntity>> getStudyCourses() {
         ListDataDTO<StudyCourseEntity> res = new ListDataDTO<>();
         List<StudyCourseEntity> data = studyCourseRepo.findAll();
-        System.out.println(data);
         res.setData(data);
         res.setSuccess(true);
         return new ResponseEntity<ListDataDTO<StudyCourseEntity>>(res, HttpStatus.OK);
+
+    }
+    @GetMapping("/semesters") 
+    public ResponseEntity<ListDataDTO<SemesterDTO>> getSemesters() {
+        ListDataDTO<SemesterDTO> res = new ListDataDTO<>();
+        List<SemesterEntity> data = semesterRepo.findAll();
+        List<SemesterDTO> dataToSend = data.stream().map(s -> new SemesterDTO(s)).toList();
+        res.setData(dataToSend);
+        res.setSuccess(true);
+        return new ResponseEntity<ListDataDTO<SemesterDTO>>(res, HttpStatus.OK);
+
 
     }
 

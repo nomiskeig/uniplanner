@@ -19,16 +19,19 @@ import org.springframework.web.bind.annotation.RestController;
 import de.giek.uniplanner.dto.CategoryPickDTO;
 import de.giek.uniplanner.dto.ListDataDTO;
 import de.giek.uniplanner.dto.SuccessAndMessageDTO;
+import de.giek.uniplanner.dto.UpdateModulePickDTO;
 import de.giek.uniplanner.dto.UserCategoryPickDTO;
 import de.giek.uniplanner.dto.UserModulePickDTO;
 import de.giek.uniplanner.dto.UserPickDTO;
 import de.giek.uniplanner.model.CategoryEntity;
 import de.giek.uniplanner.model.ModuleEntity;
+import de.giek.uniplanner.model.SemesterEntity;
 import de.giek.uniplanner.model.UserCategoryPickEntity;
 import de.giek.uniplanner.model.UserEntity;
 import de.giek.uniplanner.model.UserModulePickEntity;
 import de.giek.uniplanner.repository.CategoryRepo;
 import de.giek.uniplanner.repository.ModuleRepo;
+import de.giek.uniplanner.repository.SemesterRepo;
 import de.giek.uniplanner.repository.UserCategoryPickRepo;
 import de.giek.uniplanner.repository.UserModulePickRepo;
 import de.giek.uniplanner.repository.UserRepo;
@@ -47,6 +50,17 @@ public class PlanController {
     private UserCategoryPickRepo ucpRepo;
     @Autowired
     private UserModulePickRepo umpRepo;
+    @Autowired
+    private SemesterRepo semesterRepo;
+
+    @GetMapping("/startingSemester")
+    public ResponseEntity<SuccessAndMessageDTO> updateUserPicks(Authentication auth) {
+        SuccessAndMessageDTO res = new SuccessAndMessageDTO();
+        res.setMessage("W2024");
+        res.setSuccess(true);
+        return new ResponseEntity<SuccessAndMessageDTO>(res, HttpStatus.OK);
+
+    }
 
     @PutMapping("/updateCategoryPicks")
     public ResponseEntity<SuccessAndMessageDTO> updateUserPicks(Authentication auth,
@@ -130,9 +144,9 @@ public class PlanController {
         UserEntity user = maybeUser.get();
 
         Optional<UserCategoryPickEntity> maybeUcpe = ucpRepo.findByUser(user);
-        UserCategoryPickDTO dto  = null;
+        UserCategoryPickDTO dto = null;
         if (maybeUcpe.isPresent()) {
-         dto = new UserCategoryPickDTO(maybeUcpe.get());
+            dto = new UserCategoryPickDTO(maybeUcpe.get());
         }
         return new ResponseEntity<UserCategoryPickDTO>(dto, HttpStatus.OK);
 
@@ -188,6 +202,27 @@ public class PlanController {
         res.setData(dtos);
         res.setSuccess(true);
         return new ResponseEntity<ListDataDTO<UserModulePickDTO>>(res, HttpStatus.OK);
+
+    }
+
+    @PostMapping("/updateModulePick")
+    public ResponseEntity updateModulePick(Authentication auth, @RequestBody UpdateModulePickDTO updatedModulePick) {
+        Optional<SemesterEntity> maybeSemester = semesterRepo.findById(updatedModulePick.getSemesterID());
+        if (maybeSemester.isEmpty()) {
+            return new ResponseEntity<String>("There is no semester with id " + updatedModulePick.getSemesterID() + ".",
+                    HttpStatus.BAD_REQUEST);
+        }
+        UserEntity user = userRepo.findByUsername(auth.getName()).orElseThrow();
+        Optional<UserModulePickEntity> maybePick = umpRepo.findByUserAndCategoryAndModule(user,
+                updatedModulePick.getCategoryID(), updatedModulePick.getModuleID());
+        if (maybePick.isEmpty()) {
+            return new ResponseEntity<String>("Provided module pick is not found.", HttpStatus.BAD_REQUEST);
+        }
+
+        UserModulePickEntity userPick = maybePick.get();
+        userPick.setSemester(maybeSemester.get());
+        umpRepo.save(userPick);
+        return new ResponseEntity<String>("Success", HttpStatus.OK);
 
     }
 

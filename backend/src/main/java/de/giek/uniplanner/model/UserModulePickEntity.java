@@ -29,6 +29,18 @@ public class UserModulePickEntity {
     @JoinColumn(name ="user", referencedColumnName = "user_id")
     private UserEntity user;
 
+    @ManyToOne
+    @JoinColumn(name= "semester", referencedColumnName = "semester_id")
+    private SemesterEntity semester;
+
+	public SemesterEntity getSemester() {
+		return semester;
+	}
+
+	public void setSemester(SemesterEntity semester) {
+		this.semester = semester;
+	}
+
 	public Integer getUserModulePick_id() {
 		return userModulePick_id;
 	}

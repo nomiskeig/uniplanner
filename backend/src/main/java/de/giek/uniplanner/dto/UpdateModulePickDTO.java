@@ -1,16 +1,9 @@
 package de.giek.uniplanner.dto;
 
-
-public class UserPickDTO {
+public class UpdateModulePickDTO {
     private int moduleID;
     private int categoryID;
-    private int semesterID;
-	public int getSemesterID() {
-		return semesterID;
-	}
-	public void setSemesterID(int semesterID) {
-		this.semesterID = semesterID;
-	}
+	private int semesterID;
 	public int getModuleID() {
 		return moduleID;
 	}
@@ -22,6 +15,12 @@ public class UserPickDTO {
 	}
 	public void setCategoryID(int categoryID) {
 		this.categoryID = categoryID;
+	}
+	public int getSemesterID() {
+		return semesterID;
+	}
+    public void setSemesterID(int semester) {
+		this.semesterID = semester;
 	}
 
 }
