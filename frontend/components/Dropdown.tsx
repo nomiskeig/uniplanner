@@ -22,7 +22,7 @@ export function Dropdown<T>(props: DropdownProps<T>) {
         <div className="">{props.title}</div>
         <div className="w-full">
             <div
-                className={`w-full border-2 border-black p-2 rounded cursor-pointer bg-gray-300 ${expanded ? "after:content-['\\25B2']" : "after:content-['\\25BC']"} after:float-right`}
+                className={`w-full border border-black p-2 rounded cursor-pointer bg-gray-300 ${expanded ? "after:content-['\\25B2']" : "after:content-['\\25BC']"} after:float-right`}
                 onClick={() => { setExpanded(!expanded) }}>{current.name}</div>
             {expanded ? <div ref={ref}className="absolute border-black border-2 mt-2 rounded">{props.options.map((option, index) => {
                 return <div className="cursor-pointer py-1 px-2 hover:bg-gray-300 border-black bg-gray-200"

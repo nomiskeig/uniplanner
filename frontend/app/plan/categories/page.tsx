@@ -5,13 +5,13 @@ import { CategoryContainer } from "@/components/CategoryContainer";
 import { Dropdown, DropdownOption } from "@/components/Dropdown";
 import { useRouter } from "next/navigation";
 import React, { useContext, useEffect } from "react"
-import { Category, CategoryType, Module, PickedCategories, PickedModule } from "../types";
 import { useTranslation } from "react-i18next";
 import { useGetPublicData } from "@/hooks/useGetPublicData";
 import { useGetPickedCategories } from "@/hooks/useGetPickedCategories";
 import { useGetPickedModules } from "@/hooks/useGetPickedModules";
 import { useLogin } from "@/hooks/useLogin";
 import { useNotificiations } from "@/hooks/useNotifications";
+import { Category } from "@/app/types";
 
 function compareCategories(a: Category, b: Category) {
     return a.name.localeCompare(b.name)
@@ -20,7 +20,7 @@ function compareCategories(a: Category, b: Category) {
 export default function Page() {
 
     const { categories, categoryTypes, modules, isLoading, error } = useGetPublicData(1);
-    const { user, isLoggedIn } = useLogin("/plan", true);
+    const { user, isLoggedIn } = useLogin("/plan/categories", true);
     const { pickedModules, pickedModulesError, isPickedModulesLoading } = useGetPickedModules(user.token);
     const { pickedCategories, setPickedCategories, pickedCategoriesError, isPickedCategoriesLoading } = useGetPickedCategories(user.token);
     const { addNotification } = useNotificiations();
@@ -146,9 +146,9 @@ export default function Page() {
     const inDepth1Cat = pickedCategories.indepth1Category;
     const inDepth2Cat = pickedCategories.indepth2Category;
     const supplementaryCat = pickedCategories.supplementaryCategory
-    const pickedInDepth1Modules = pickedModules.filter(pm => pm.category.categoryID == inDepth1Cat.categoryID).map(pm =>  ({ module: pm.module, semester: pm.semester }))
-    const pickedInDepth2Modules = pickedModules.filter(pm => pm.category.categoryID == inDepth2Cat.categoryID).map(pm => ({module: pm.module, semester: pm.semester}))
-    const pickedSupplementaryModules = pickedModules.filter(pm => pm.category.categoryID == supplementaryCat.categoryID).map(pm => ({module: pm.module, semester: pm.semester}))
+    const pickedInDepth1Modules = pickedModules.filter(pm => pm.category.categoryID == inDepth1Cat.categoryID)
+    const pickedInDepth2Modules = pickedModules.filter(pm => pm.category.categoryID == inDepth2Cat.categoryID)
+    const pickedSupplementaryModules = pickedModules.filter(pm => pm.category.categoryID == supplementaryCat.categoryID)
     const inDepth1Default = indepth1PickerOptions.findIndex(option => option.element.categoryID == pickedCategories.indepth1Category.categoryID)
     const inDepth2Default = indepth2PickerOptions.findIndex(option => option.element.categoryID == pickedCategories.indepth2Category.categoryID)
     const supplementaryDefault = supplementaryPickerOptions.findIndex(option => option.element.categoryID == pickedCategories.supplementaryCategory.categoryID)

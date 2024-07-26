@@ -30,11 +30,8 @@ export default function RootLayout({
     let [notifications, setNotifications] = React.useState<Notification[]>([])
     let [notificationCounter, setNotificationCounter] = React.useState<number>(0);
     let [semester, setSemester] = React.useState<Semester | null>(null)
+    let [possibleSemesters, setPossibleSemesters] = React.useState<Semester[]>([]);
 
-    const possibleSemesterIDs: string[] = [
-         'W2024', 'S2025', 'W2026'
-    ]
-    const possibleSemesters: Semester[] = possibleSemesterIDs.map(s => getSemesterFromID(s))
 
     function getSemesterFromID(id: string): Semester {
         const name = id.at(0) == "W" ? "Winter " + id.substring(1) : "Summer " + id.substring(1);
@@ -45,6 +42,9 @@ export default function RootLayout({
 
     }
     useEffect(() => {
+        fetch('http://localhost:8080/api/v1/data/semesters', {
+            method: 'GET'
+        }).then(res => res.json()).then(data => {console.log(data.data);setPossibleSemesters(data.data)});
         if (!user.isLoggedIn) {
             return;
         }
@@ -52,7 +52,7 @@ export default function RootLayout({
             method: 'GET', headers: {
                 'Authorization': "Bearer " + user.token
             }
-        }).then(res => res.json()).then(data => { console.log(data); setSemester(getSemesterFromID(data.message)) }
+        }).then(res => res.json()).then(data => { console.log(data); setSemester(data.message) }
         )
 
     }, [user])

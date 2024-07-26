@@ -1,29 +1,21 @@
-import { Category, Module, PickedModule, Semester } from "@/app/types"
-import { createClass } from "@/utils"
-import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table"
-import Link from "next/link"
-import { useContext } from "react"
-import { SemesterContext } from "./SemesterContext"
-import { InlineDropdown, InlineDropdownOption, InlineDropdownProps } from "./InlineDropdown"
-import { UserContext } from "./UserContext"
+import { PickedModule, Semester } from "@/app/types";
+import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table";
+import { useContext } from "react";
+import { UserContext } from "./UserContext";
+import Link from "next/link";
+import { SemesterContext } from "./SemesterContext";
+import { InlineDropdown, InlineDropdownOption } from "./InlineDropdown";
+import { createClass } from "@/utils";
 
-export interface CategoryContainerProps {
-    name: string
+export interface SemesterContainerProps {
+    name: string,
+    semester: Semester,
     data: PickedModule[]
-    category: Category
 
 }
 
 
-function getBackgroundColor(currentECTS: number, min: number, max: number) {
-    if (currentECTS <= max && currentECTS >= min) {
-        return "bg-green-100"
-    }
-    return "bg-red-100"
-
-}
-export function CategoryContainer(props: CategoryContainerProps) {
-    console.log(props.data)
+export function SemesterContainer(props: SemesterContainerProps) {
     const semesterContext = useContext(SemesterContext);
     const columnHelper = createColumnHelper<PickedModule>()
     const { user } = useContext(UserContext);
@@ -95,11 +87,9 @@ export function CategoryContainer(props: CategoryContainerProps) {
         columns,
         getCoreRowModel: getCoreRowModel()
     })
-    return <div className={createClass("m-2", "p-2", "border-slate-950", "border-2", getBackgroundColor(currentECTS, props.category.minECTS, props.category.maxECTS))}>
+    return <div className={createClass("m-2", "p-2", "border-slate-950", "border-2")}>
 
         <div className="text-xl font-bold">{props.name}</div>
-        <div className="text-xl"> {props.category.name}</div>
-        <div className="justify-self-end">ECTS: {currentECTS} of {props.category.minECTS}-{props.category.maxECTS}</div>
         <div>
             <table className="table-fixed border-gray-500 border-2 w-full">
                 <thead>{table.getHeaderGroups().map(headerGroup => (
@@ -126,4 +116,5 @@ export function CategoryContainer(props: CategoryContainerProps) {
             </table>
         </div>
     </div>
+
 }
