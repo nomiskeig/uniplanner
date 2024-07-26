@@ -5,6 +5,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
@@ -21,8 +23,20 @@ public class UserEntity {
     @OneToOne(mappedBy = "user")
     private UserCategoryPickEntity userCategoryPick;
 
+    @ManyToOne
+    @JoinColumn(name="semester_id", nullable= false)
+    private SemesterEntity startingSemester;
 
-    public Integer getSelectedStudyCourse() {
+
+    public SemesterEntity getStartingSemester() {
+		return startingSemester;
+	}
+
+	public void setStartingSemester(SemesterEntity startingSemester) {
+		this.startingSemester = startingSemester;
+	}
+
+	public Integer getSelectedStudyCourse() {
         return selectedStudyCourse;
     }
 

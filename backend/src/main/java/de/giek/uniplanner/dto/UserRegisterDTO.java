@@ -1,11 +1,20 @@
 package de.giek.uniplanner.dto;
 
-public class UserAuthDTO {
+public class UserRegisterDTO {
 
     private String username;
     private String password;
+    private int startingSemester;
 
-    public String getUsername() {
+    public int getStartingSemester() {
+		return startingSemester;
+	}
+
+	public void setStartingSemester(int register) {
+		this.startingSemester = register;
+	}
+
+	public String getUsername() {
         return username;
     }
 

@@ -1,5 +1,7 @@
 package de.giek.uniplanner.controller;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,13 +15,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import de.giek.uniplanner.dto.UserAuthDTO;
+import de.giek.uniplanner.dto.UserLoginDTO;
+import de.giek.uniplanner.dto.UserRegisterDTO;
 import de.giek.uniplanner.dto.LoginResponseDTO;
 import de.giek.uniplanner.dto.SuccessAndMessageDTO;
 import de.giek.uniplanner.model.CategoryEntity;
+import de.giek.uniplanner.model.SemesterEntity;
 import de.giek.uniplanner.model.UserCategoryPickEntity;
 import de.giek.uniplanner.model.UserEntity;
 import de.giek.uniplanner.repository.CategoryRepo;
+import de.giek.uniplanner.repository.SemesterRepo;
 import de.giek.uniplanner.repository.UserCategoryPickRepo;
 import de.giek.uniplanner.repository.UserRepo;
 import de.giek.uniplanner.security.JwtGenerator;
@@ -41,10 +46,12 @@ public class AuthController {
     @Autowired
     private CategoryRepo catRepo;
     @Autowired
+    private SemesterRepo semRepo;
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
     @PostMapping("/register")
-    public ResponseEntity<SuccessAndMessageDTO> register(@RequestBody UserAuthDTO registerDTO) {
+    public ResponseEntity<SuccessAndMessageDTO> register(@RequestBody UserRegisterDTO registerDTO) {
         SuccessAndMessageDTO response = new SuccessAndMessageDTO();
         if (userRepo.existsByUsername(registerDTO.getUsername())) {
             response.setMessage("Username already registered!");
@@ -66,9 +73,19 @@ public class AuthController {
             return new ResponseEntity<SuccessAndMessageDTO>(response, HttpStatus.BAD_REQUEST);
 
         }
+        Optional<SemesterEntity> maybeSemester = semRepo.findById(registerDTO.getStartingSemester());
+        if (maybeSemester.isEmpty()) {
+            response.setMessage("There is no semester with id " + registerDTO.getStartingSemester() + ".");
+            response.setSuccess(false);
+            return new ResponseEntity<SuccessAndMessageDTO>(response, HttpStatus.BAD_REQUEST);
+        }
+
+
+        
         UserEntity userEntity = new UserEntity();
         userEntity.setUsername(username);
         userEntity.setPassword(passwordEncoder.encode(password));
+        userEntity.setStartingSemester(maybeSemester.get());
 
 
         UserCategoryPickEntity ucpe = new UserCategoryPickEntity();
@@ -79,7 +96,7 @@ public class AuthController {
         ucpe.setIndepth2(indepth2);
         ucpe.setSupplementary(supplemenary);
 
-        UserEntity res = userRepo.save(userEntity);
+        userRepo.save(userEntity);
         ucpe.setUser(userEntity);
         ucpRepo.save(ucpe);
         response.setMessage("User created successfully");
@@ -90,7 +107,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponseDTO> login(@RequestBody UserAuthDTO loginDTO) {
+    public ResponseEntity<LoginResponseDTO> login(@RequestBody UserLoginDTO loginDTO) {
         System.out.println("loggin in");
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginDTO.getUsername(), loginDTO.getPassword()));
