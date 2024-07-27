@@ -11,6 +11,25 @@ const HIGHERQUALI = "higherQualifications"
 const file = fs.readFileSync("./infomaster/infomaster.html");
 const $ = load(file);
 
+function isStammModule(stringID: string): boolean {
+    if (stringID == "M-INFO-100729" ||
+        stringID == "M-INFO-100799" ||
+        stringID == "M-INFO-100801" ||
+        stringID == "M-INFO-100803" ||
+        stringID == "M-INFO-100818" ||
+        stringID == "M-INFO-100833" ||
+        stringID == "M-INFO-100856" ||
+        stringID == "M-INFO-100893" ||
+        stringID == "M-INFO-101173" ||
+        stringID == "M-INFO-106299" ||
+        stringID == "M-INFO-106315"
+    ) {
+        return true;
+    }
+    return false;
+
+}
+
 function getUnparsedCategories(): Cheerio<Element>[] {
     let list: Cheerio<Element>[] = []
     let table = $("table").first();
@@ -47,11 +66,24 @@ export const infomasterParser: Parser = {
         const details = $('.moduleheader');
         details.each(function(i, elem) {
 
+            let isPractical = false;
+            let isSeminar = false;
+            let isStammM = false;
             let header = elem;
             let name = "";
             let id = "";
             name = $(header).children().first().text().match(/Modul: (.*) \[/)![1];
-            id = $(header).attr('id')!;
+            if (name.toLowerCase().includes("seminar")) {
+                isSeminar = true;
+            }
+            if (name.toLowerCase().includes("praktikum")) {
+                isPractical = true;
+            }
+            if (name.toLowerCase())
+                id = $(header).attr('id')!;
+            if (isStammModule(id)) {
+                isStammM = true;
+            }
             //console.log(name, id)
             let metatable = $(elem).next().find("tr");
             let partOf: String[] = [];
@@ -149,6 +181,9 @@ export const infomasterParser: Parser = {
                 content: content,
                 qualificationGoals: qualificationGoals,
                 recommendations: recommendations,
+                isPractical: isPractical,
+                isSeminar: isSeminar,
+                isStammmodul: isStammM
             });
 
 
@@ -265,11 +300,12 @@ export const infomasterParser: Parser = {
                 console.log(moduleID)
 
                 mappings.push({
-                   stringModuleID: moduleID,
-                   stringModulePartID: m[2]
+                    stringModuleID: moduleID,
+                    stringModulePartID: m[2]
                 })
             }
-            )} )
+            )
+        })
 
         return mappings;
     },

@@ -7,7 +7,7 @@ async function getConnection() {
     if (conn == null) {
         conn = mariadb.createConnection({
             host: 'localhost',
-            port: 3307,
+            port: 3306,
             database: 'uniplanner',
             user: process.env.DB_USER,
             password: process.env.DB_PASSWORD,
@@ -75,6 +75,9 @@ export async function createTables() {
         + 'content text,'
         + 'qualificationGoals text,'
         + 'recommendations text,'
+        + 'isPractical bool,'
+        + 'isSeminar bool,'
+        + 'isStammmodul bool,'
         + "primary key(module_id),"
         + 'foreign key(studyCourse) references studyCourse(studyCourse_id)'
 
@@ -154,9 +157,9 @@ export async function addModules(modules: Module[], studyCourseID: number) {
     const conn = await getConnection();
 
     const data = modules.map(m => {
-        return [m.id, studyCourseID, m.name, m.turnus, m.responsible, m.ects, m.requirements, m.successControl, m.content, m.qualificationGoals, m.recommendations]
+        return [m.id, studyCourseID, m.name, m.turnus, m.responsible, m.ects, m.requirements, m.successControl, m.content, m.qualificationGoals, m.recommendations, m.isPractical, m.isSeminar, m.isStammmodul]
     })
-    await conn.batch('INSERT INTO module (module_string_id, studyCourse, name, turnus,responsible, ects, requirements, successControl, content, qualificationGoals, recommendations) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', data)
+    await conn.batch('INSERT INTO module (module_string_id, studyCourse, name, turnus,responsible, ects, requirements, successControl, content, qualificationGoals, recommendations, isPractical, isSeminar, isStammmodul) values (?,?,?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', data)
 
 }
 

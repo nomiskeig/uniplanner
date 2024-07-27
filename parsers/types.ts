@@ -10,6 +10,9 @@ export interface Module {
     content: String,
     qualificationGoals: String,
     recommendations: String | null
+    isPractical: boolean,
+    isSeminar: boolean,
+    isStammmodul: boolean
 
 
 }
