@@ -27,7 +27,12 @@ public class ModuleDTO {
     private String content;
     private String successControl;
     private String qualificationGoals;
-    public ModuleDTO(ModuleEntity me, boolean addCategories) {
+    private boolean isPractical;
+    private boolean isSeminar;
+
+	private boolean isStammmodul;
+
+	public ModuleDTO(ModuleEntity me, boolean addCategories) {
         this.moduleID = me.getModule_id();
         this.stringID = me.getModule_string_id();
         this.name = me.getName();
@@ -46,6 +51,28 @@ public class ModuleDTO {
             this.categories = new HashSet<>();
         }
     }
+
+	public boolean isPractical() {
+		return isPractical;
+	}
+
+	public void setPractical(boolean isPractical) {
+		this.isPractical = isPractical;
+	}
+
+	public boolean isSeminar() {
+		return isSeminar;
+	}
+
+	public void setSeminar(boolean isSeminar) {
+		this.isSeminar = isSeminar;
+	}
+    public boolean isStammmodul() {
+		return isStammmodul;
+	}
+    public void setStammmodul(boolean isStammmodul) {
+		this.isStammmodul = isStammmodul;
+	}
 
 	public Set<ModulePartDTO> getParts() {
 		return parts;

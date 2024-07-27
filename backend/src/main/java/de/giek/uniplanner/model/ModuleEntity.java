@@ -35,12 +35,39 @@ public class ModuleEntity {
     private String recommendations;
     @ManyToMany(mappedBy ="modules")
     private Set<CategoryEntity> categories;
-    public CategoryTypeEntity getType() {
+    private boolean isPractical;
+    private boolean isSeminar;
+    private boolean isStammmodul;
+
+	@ManyToMany(mappedBy ="modules")
+    private Set<ModulePartEntity> parts;
+
+	public CategoryTypeEntity getType() {
 		return type;
 	}
 
-    @ManyToMany(mappedBy ="modules")
-    private Set<ModulePartEntity> parts;
+	public boolean isPractical() {
+		return isPractical;
+	}
+
+	public void setPractical(boolean isPractical) {
+		this.isPractical = isPractical;
+	}
+
+	public boolean isSeminar() {
+		return isSeminar;
+	}
+	public void setSeminar(boolean isSeminar) {
+		this.isSeminar = isSeminar;
+	}
+    public boolean isStammmodul() {
+		return isStammmodul;
+	}
+
+
+    public void setStammmodul(boolean isStammmodul) {
+		this.isStammmodul = isStammmodul;
+	}
 
     public Set<ModulePartEntity> getParts() {
 		return parts;
