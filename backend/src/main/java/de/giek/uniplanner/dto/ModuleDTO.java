@@ -44,6 +44,9 @@ public class ModuleDTO {
         this.content = me.getContent();
         this.successControl = me.getSuccessControl();
         this.qualificationGoals = me.getQualificationGoals();
+        this.isPractical = me.isPractical();
+        this.isSeminar = me.isSeminar();
+        this.isStammmodul = me.isStammmodul();
         this.parts = me.getParts().stream().map(p -> new ModulePartDTO(p)).collect(Collectors.toSet());
         if (addCategories) {
             this.categories = mapEntitiesToDTOs(me.getCategories());
