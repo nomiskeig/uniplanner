@@ -151,6 +151,8 @@ export default function Page() {
     const pickedSupplementaryModules = pickedModules.filter(pm => pm.category.categoryID == supplementaryCat.categoryID)
     const inDepth1Default = indepth1PickerOptions.findIndex(option => option.element.categoryID == pickedCategories.indepth1Category.categoryID)
     const inDepth2Default = indepth2PickerOptions.findIndex(option => option.element.categoryID == pickedCategories.indepth2Category.categoryID)
+    const pickedPickAreaModules = pickedModules.filter(pm => pm.category.name == "Wahlbereich Informatik");
+    console.log(pickedPickAreaModules)
     const supplementaryDefault = supplementaryPickerOptions.findIndex(option => option.element.categoryID == pickedCategories.supplementaryCategory.categoryID)
     return <div>
         <div>Plan</div>
@@ -177,9 +179,9 @@ export default function Page() {
                     data={pickedSupplementaryModules}
                 ></CategoryContainer>
                 <CategoryContainer
-                    name={`${t("inDepthModule")} 2`}
-                    category={inDepth2Cat}
-                    data={pickedInDepth2Modules}
+                    name={`Wahlbereich`}
+                    category={categories.find(c => c.name == "Wahlbereich Informatik")!}
+                    data={pickedPickAreaModules}
                 ></CategoryContainer>
             </div>
         </div>
