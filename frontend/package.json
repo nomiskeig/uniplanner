@@ -15,6 +15,7 @@
     "@tanstack/react-table": "^8.17.3",
     "@types/cheerio": "^0.22.35",
     "cheerio": "^1.0.0-rc.12",
+    "dotenv": "^16.4.5",
     "fontawesome-free": "^1.0.4",
     "i18next": "^23.11.5",
     "next": "14.2.4",

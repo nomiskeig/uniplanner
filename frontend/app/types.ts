@@ -13,6 +13,9 @@ export interface Module {
     qualificationGoals: String,
     recommendations: String | null
     parts: ModulePart[];
+    practical: boolean,
+    seminar: boolean,
+    stammmodul: boolean
 
 
 

@@ -14,7 +14,7 @@ export default function Page() {
 
     const semesters: Semester[] = pickedModules.filter(pm => pm.semester != null).map(pm => pm.semester!);
     return <div>
-        <div>Semesters</div>
+        <div className="text-2xl m-2 mt-10">Semesters</div>
         {semesters.map(s => {
             const options = pickedModules.filter(pm => pm.semester && pm.semester.id == s.id);
 

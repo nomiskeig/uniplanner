@@ -7,10 +7,10 @@ async function getConnection() {
     if (conn == null) {
         conn = mariadb.createConnection({
             host: 'localhost',
-            port: 3306,
-            database: 'uniplanner',
-            user: process.env.DB_USER,
-            password: process.env.DB_PASSWORD,
+            port: Number(process.env.DATABASE_PORT!),
+            database: process.env.DATABASE_NAME,
+            user: process.env.DATABASE_USER,
+            password: process.env.DATABASE_PASSWORD,
             insertIdAsNumber: true,
             bigIntAsNumber: true
         })

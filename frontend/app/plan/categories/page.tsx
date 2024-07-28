@@ -12,6 +12,7 @@ import { useGetPickedModules } from "@/hooks/useGetPickedModules";
 import { useLogin } from "@/hooks/useLogin";
 import { useNotificiations } from "@/hooks/useNotifications";
 import { Category } from "@/app/types";
+import { API_URL } from "@/app/global";
 
 function compareCategories(a: Category, b: Category) {
     return a.name.localeCompare(b.name)
@@ -39,7 +40,7 @@ export default function Page() {
                     "indepth2": pickedCategories.indepth2Category.categoryID,
                     "supplementary": pickedCategories.supplementaryCategory.categoryID
                 }
-                fetch('http://localhost:8080/api/v1/plan/updateCategoryPicks', {
+                fetch(API_URL + '/api/v1/plan/updateCategoryPicks', {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
@@ -77,7 +78,7 @@ export default function Page() {
                     "indepth2": cat.categoryID,
                     "supplementary": pickedCategories.supplementaryCategory.categoryID
                 }
-                fetch('http://localhost:8080/api/v1/plan/updateCategoryPicks', {
+                fetch(API_URL + '/api/v1/plan/updateCategoryPicks', {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
@@ -117,7 +118,7 @@ export default function Page() {
                     "indepth2": pickedCategories.indepth1Category.categoryID,
                     "supplementary": cat.categoryID
                 }
-                fetch('http://localhost:8080/api/v1/plan/updateCategoryPicks', {
+                fetch(API_URL + '/api/v1/plan/updateCategoryPicks', {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
@@ -155,7 +156,7 @@ export default function Page() {
     console.log(pickedPickAreaModules)
     const supplementaryDefault = supplementaryPickerOptions.findIndex(option => option.element.categoryID == pickedCategories.supplementaryCategory.categoryID)
     return <div>
-        <div>Plan</div>
+        <div className="text-2xl m-2 mt-10">Categories</div>
         <div>
             <div className="p-2">
                 <Dropdown title={`${t("pickedIn")} ${t("inDepthModule")} 1`} options={indepth1PickerOptions} defaultIndex={inDepth1Default} ></Dropdown>

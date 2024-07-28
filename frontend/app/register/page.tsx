@@ -11,6 +11,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useContext, useEffect } from "react";
 import { Semester } from "../types";
+import { API_URL } from "../global";
 
 function writeToCookie(token: string, username: string) {
     document.cookie = "token=" + token
@@ -42,7 +43,7 @@ export default function Page() {
             semester = possibleSemesters[0]
 
         }
-        fetch("http://localhost:8080/api/v1/users/register", {
+        fetch(API_URL + "/api/v1/users/register", {
             headers: {
                 'Content-Type': 'application/json'
             },

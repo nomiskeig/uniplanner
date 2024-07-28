@@ -1,3 +1,4 @@
+import { API_URL } from "@/app/global";
 import { PickedModule } from "@/app/types";
 import { useState, useEffect } from "react";
 
@@ -18,7 +19,7 @@ export const useGetPickedModules = (token: string) => {
         if (token == "") {
             return
         }
-        fetch('http://localhost:8080/api/v1/plan/getModulePicks', {
+        fetch(API_URL + '/api/v1/plan/getModulePicks', {
             method: 'GET', headers: {
                 'Authorization': "Bearer " + token
             }

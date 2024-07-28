@@ -7,6 +7,7 @@ import { UserContext } from "@/components/UserContext";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useContext, useEffect } from "react";
+import { API_URL } from "../global";
 
 function writeToCookie(token: string, username: string) {
     document.cookie = "token=" + token
@@ -19,7 +20,7 @@ export default function Page() {
     const userContext = useContext(UserContext)
     const router = useRouter();
     function handleLogin() {
-        fetch("http://localhost:8080/api/v1/users/login", {
+        fetch(API_URL + "/api/v1/users/login", {
             headers: {
                 'Content-Type': 'application/json'
             },

@@ -11,8 +11,6 @@ services:
     depends_on:
       db:
         condition: service_started
-    environment:
-      DATABASE_PASSWORD: ThisIsAStrongPassword123
     build:
       context: ./backend
       dockerfile: Dockerfile
@@ -35,11 +33,6 @@ services:
     ports:
       - "3307:3306"
 
-    secrets:
-      - db_password
 
 
 
-secrets:
-  db_password:
-    file: db_password.txt

@@ -1,5 +1,6 @@
 "use client"
 
+import { API_URL } from "@/app/global";
 import { Module } from "@/app/types"
 import { ModulePartDisplay } from "@/components/ModulePartDisplay"
 import { useEffect, useState } from "react"
@@ -10,7 +11,7 @@ export default function Page({ params }: { params: { id: string } }) {
     const [module, setModule] = useState<Module | null>(null)
 
     useEffect(() => {
-        fetch(`http://localhost:8080/api/v1/data/modules/${params.id}`).then((res => res.json())).then((data) => {console.log(data); setModule(data)}).catch(err => console.log(err))
+        fetch(API_URL + `/api/v1/data/modules/${params.id}`).then((res => res.json())).then((data) => {console.log(data); setModule(data)}).catch(err => console.log(err))
     },[params.id])
     
     if (module == null) {

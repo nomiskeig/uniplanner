@@ -10,7 +10,7 @@ import { ButtonMenu, ButtonMenuOption } from "@/components/ButtonMenu.tsx";
 import { useGetPickedModules } from "@/hooks/useGetPickedModules.tsx";
 import { useLogin } from "@/hooks/useLogin.tsx";
 import { useTranslation } from "react-i18next";
-import { API } from "../global.tsx";
+import { API_URL } from "../global.tsx";
 
 
 
@@ -92,7 +92,7 @@ export default function Page() {
         if (isAlreadyPicked) {
             return [{
                 text: "Remove from " + categoryOfModule!.name, action: () => {
-                    fetch("http://localhost:8080/api/v1/plan/removeModulePick", {
+                    fetch(API_URL + "/api/v1/plan/removeModulePick", {
                         method: "POST",
                         headers: {
                             'Authorization': "Bearer " + user.token,
@@ -113,7 +113,7 @@ export default function Page() {
         return possibleCategories.map((cat) => {
             return {
                 text: "Add to " + cat.name, action: () => {
-                    fetch(API + "/api/v1/plan/addModulePick", {
+                    fetch(API_URL + "/api/v1/plan/addModulePick", {
                         method: "POST",
                         headers: {
                             'Authorization': "Bearer " + user.token,
@@ -134,13 +134,13 @@ export default function Page() {
 
 
     useEffect(() => {
-        fetch(API + `/api/v1/data/modules?studyCourseID=${studyCourse}`).then((res => res.json())).then((data) => setModules(data.data)).catch(err => console.log(err))
-        fetch(API + `/api/v1/data/categories?studyCourseID=${studyCourse}`).then((res => res.json())).then((data) => setCategories(data.data)).catch(err => console.log(err))
-        fetch(API + `/api/v1/data/categoryTypes?studyCourseID=${studyCourse}`).then((res => res.json())).then((data) => setCategoryTypes(data.data)).catch(err => console.log(err))
+        fetch(API_URL + `/api/v1/data/modules?studyCourseID=${studyCourse}`).then((res => res.json())).then((data) => setModules(data.data)).catch(err => console.log(err))
+        fetch(API_URL + `/api/v1/data/categories?studyCourseID=${studyCourse}`).then((res => res.json())).then((data) => setCategories(data.data)).catch(err => console.log(err))
+        fetch(API_URL + `/api/v1/data/categoryTypes?studyCourseID=${studyCourse}`).then((res => res.json())).then((data) => setCategoryTypes(data.data)).catch(err => console.log(err))
     }, [studyCourse])
     useEffect(() => {
         if (user.isLoggedIn) {
-            fetch(API + '/api/v1/plan/getCategoryPicks', {
+            fetch(API_URL + '/api/v1/plan/getCategoryPicks', {
                 method: 'GET', headers: {
                     'Authorization': "Bearer " + user.token
                 }

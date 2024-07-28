@@ -1,3 +1,4 @@
+import { API_URL } from "@/app/global";
 import { PickedCategories } from "@/app/types";
 import { useState, useEffect } from "react";
 
@@ -19,7 +20,7 @@ export const useGetPickedCategories = (token: string) => {
         }
         
 
-        fetch('http://localhost:8080/api/v1/plan/getCategoryPicks', {
+        fetch(API_URL + '/api/v1/plan/getCategoryPicks', {
             method: 'GET', headers: {
                 'Authorization': "Bearer " + token
             }
