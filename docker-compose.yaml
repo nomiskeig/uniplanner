@@ -28,7 +28,7 @@ services:
       context: ./database
       dockerfile: Dockerfile
     environment:
-      MARIADB_ROOT_PASSWORD_FILE: /run/secrets/db_password
+      MARIADB_ROOT_PASSWORD:  ${DATABASE_PASSWORD}
       MARIADB_DATABASE: uniplanner 
     ports:
       - "3307:3306"

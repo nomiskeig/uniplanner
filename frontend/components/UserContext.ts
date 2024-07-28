@@ -9,7 +9,4 @@ export interface IUserContext {
     setUser: (user: User) => void
 }
 // used to store information about the currently logged in user
-export const UserContext = createContext<IUserContext>({ user: { token: "", username: "", isLoggedIn: false, startingSemester: {
-    id: "",
-    name: ""
-} }, setUser: () => { }, setSemester: () => {} })
+export const UserContext = createContext<IUserContext>({ user: { token: "", username: "", isLoggedIn: false}, setUser: () => { }, setSemester: () => {} })

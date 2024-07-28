@@ -15,10 +15,10 @@ export default function Page() {
     const semesters: Semester[] = pickedModules.filter(pm => pm.semester != null).map(pm => pm.semester!);
     return <div>
         <div className="text-2xl m-2 mt-10">Semesters</div>
-        {semesters.map(s => {
+        {semesters.map((s, i) => {
             const options = pickedModules.filter(pm => pm.semester && pm.semester.id == s.id);
 
-            return <SemesterContainer name = {s.name} semester={s} data={options}></SemesterContainer>
+            return <SemesterContainer key={i} name = {s.name} semester={s} data={options}></SemesterContainer>
 
         })}
         <SemesterContainer name= {"Not assigned"} semester={{
