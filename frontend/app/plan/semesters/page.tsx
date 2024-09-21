@@ -9,7 +9,7 @@ import { useLogin } from "@/hooks/useLogin";
 
 export default function Page() {
     const { user } = useLogin("/plan/semesters", true);
-    const { pickedModules } = useGetPickedModules(user.token);
+    const { pickedModules, reloadPickedModules } = useGetPickedModules(user.token);
 
 
     const semesters: Semester[] = pickedModules.filter(pm => pm.semester != null).map(pm => pm.semester!).reduce((acc, curr) => {
@@ -24,10 +24,10 @@ export default function Page() {
         {semesters.map((s, i) => {
             const options = pickedModules.filter(pm => pm.semester && pm.semester.id == s.id);
 
-            return <SemesterContainer key={i} name={s.name} semester={s} data={options}></SemesterContainer>
+            return <SemesterContainer reloadPicks={reloadPickedModules} key={i} name={s.name} semester={s} data={options}></SemesterContainer>
 
         })}
-        <SemesterContainer name={"Not assigned"} semester={{
+        <SemesterContainer reloadPicks={reloadPickedModules} name={"Not assigned"} semester={{
             name: "not assigned", id: "1"
         }}
             data={pickedModules.filter(pm => pm.semester == null)}

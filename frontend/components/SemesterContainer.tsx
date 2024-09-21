@@ -11,6 +11,7 @@ export interface SemesterContainerProps {
     name: string,
     semester: Semester,
     data: PickedModule[]
+    reloadPicks: () => void
 
 }
 
@@ -51,7 +52,7 @@ export function SemesterContainer(props: SemesterContainerProps) {
 
 
                         }
-                        )
+                        ).then(() => props.reloadPicks());
 
 
                     }
