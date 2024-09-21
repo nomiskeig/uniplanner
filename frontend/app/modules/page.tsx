@@ -1,6 +1,6 @@
 "use client"
 
-import { ColumnFiltersState, FilterFn, createColumnHelper, flexRender, getCoreRowModel, getFilteredRowModel, useReactTable } from "@tanstack/react-table";
+import { ColumnFiltersState, FilterFn, createColumnHelper, flexRender, getCoreRowModel, getFilteredRowModel, getSortedRowModel, useReactTable } from "@tanstack/react-table";
 import { Category, CategoryType, InDepthModule, Module, PickedCategories, PickedModule, Turnus } from "../types.ts";
 import React, { useContext, useEffect, useState } from "react";
 import { Dropdown, DropdownProps } from "@/components/Dropdown.tsx";
@@ -37,7 +37,9 @@ export default function Page() {
         columnHelper.accessor('name', {
             cell: info => {
                 return <Link href={`/modules/${info.row.original.stringID}`}>{info.getValue()}</Link>
-            }
+            },
+            id: 'name',
+            sortingFn: 'text'
         }),
         columnHelper.accessor('ects', {
             cell: info => info.getValue(),
@@ -245,7 +247,13 @@ export default function Page() {
         columns,
         getCoreRowModel: getCoreRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
+        getSortedRowModel: getSortedRowModel(),
         filterFns: {},
+        initialState: {
+            sorting: [
+                { id: 'name', desc: false }
+            ]
+        },
         state: {
             columnFilters,
             columnVisibility: {
@@ -299,10 +307,13 @@ export default function Page() {
                             <th className="border border-gray-500 border-2 bg-gray-400" key={header.id}>
                                 {header.isPlaceholder
                                     ? null
-                                    : flexRender(
+                                    : <div
+                                        className="cursor-pointer"
+                                        onClick={header.column.getToggleSortingHandler()}
+                                    >{flexRender(
                                         header.column.columnDef.header,
                                         header.getContext()
-                                    )}
+                                        )}</div>}
                             </th>
                         ))}
                     </tr>
@@ -311,7 +322,7 @@ export default function Page() {
             <tbody>
                 {table.getRowModel().rows.map((row, index) => (
                     <tr key={row.id}>
-                        {row.getVisibleCells().map((cell,columnIndex) => (
+                        {row.getVisibleCells().map((cell, columnIndex) => (
                             <td className={`${getRowColor(index, row.getValue("id"))} ${columnIndex == 3 ? "" : "pl-2"} border-l border-gray-500`} key={cell.id}>
                                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
                             </td>
