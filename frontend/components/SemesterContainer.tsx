@@ -90,7 +90,10 @@ export function SemesterContainer(props: SemesterContainerProps) {
     })
     return <div className={createClass("m-2", "p-2", "border-slate-950", "border-2")}>
 
-        <div className="text-xl font-bold">{props.name}</div>
+        <div className="flex flex-row mb-2">
+            <div className="text-xl font-bold">{props.name}</div>
+            <div className="text-l ml-auto">ECTS: {currentECTS}</div>
+        </div>
         <div>
             <table className="table-fixed border-gray-500 border-2 w-full">
                 <thead>{table.getHeaderGroups().map(headerGroup => (
