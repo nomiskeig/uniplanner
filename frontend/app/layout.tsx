@@ -45,7 +45,7 @@ export default function RootLayout({
     useEffect(() => {
         fetch(API_URL + '/api/v1/data/semesters', {
             method: 'GET'
-        }).then(res => res.json()).then(data => {console.log(data.data);setPossibleSemesters(data.data)});
+        }).then(res => res.json()).then(data => {setPossibleSemesters(data.data)});
         if (!user.isLoggedIn) {
             return;
         }
@@ -53,7 +53,7 @@ export default function RootLayout({
             method: 'GET', headers: {
                 'Authorization': "Bearer " + user.token
             }
-        }).then(res => res.json()).then(data => { console.log(data); setSemester(data.message) }
+        }).then(res => res.json()).then(data => { setSemester(data.message) }
         )
 
     }, [user])

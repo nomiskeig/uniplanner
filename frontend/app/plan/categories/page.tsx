@@ -153,7 +153,6 @@ export default function Page() {
     const inDepth1Default = indepth1PickerOptions.findIndex(option => option.element.categoryID == pickedCategories.indepth1Category.categoryID)
     const inDepth2Default = indepth2PickerOptions.findIndex(option => option.element.categoryID == pickedCategories.indepth2Category.categoryID)
     const pickedPickAreaModules = pickedModules.filter(pm => pm.category.name == "Wahlbereich Informatik");
-    console.log(pickedPickAreaModules)
     const supplementaryDefault = supplementaryPickerOptions.findIndex(option => option.element.categoryID == pickedCategories.supplementaryCategory.categoryID)
     return <div>
         <div className="text-2xl m-2 mt-10">Categories</div>

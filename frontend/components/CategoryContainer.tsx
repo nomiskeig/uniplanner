@@ -1,6 +1,6 @@
 import { Category, Module, PickedModule, Semester } from "@/app/types"
 import { createClass } from "@/utils"
-import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table"
+import { createColumnHelper, flexRender, getCoreRowModel, getSortedRowModel, useReactTable } from "@tanstack/react-table"
 import Link from "next/link"
 import { useContext } from "react"
 import { SemesterContext } from "./SemesterContext"
@@ -28,7 +28,6 @@ function getBackgroundColor(currentECTS: number, min: number, max: number) {
 
 }
 export function CategoryContainer(props: CategoryContainerProps) {
-    console.log(props.data)
     const semesterContext = useContext(SemesterContext);
     const columnHelper = createColumnHelper<PickedModule>()
     const { user } = useContext(UserContext);
@@ -37,7 +36,8 @@ export function CategoryContainer(props: CategoryContainerProps) {
             header: e => <span>Name</span>,
             cell: info => {
                 return <Link href={`/modules/${info.row.original.module.stringID}`}>{info.getValue()}</Link>
-            }
+            },
+            id: 'name'
 
         }),
         columnHelper.accessor('semester.name', {
@@ -97,7 +97,13 @@ export function CategoryContainer(props: CategoryContainerProps) {
     const table = useReactTable({
         data: props.data,
         columns,
-        getCoreRowModel: getCoreRowModel()
+        getCoreRowModel: getCoreRowModel(),
+        getSortedRowModel: getSortedRowModel(),
+        initialState: {
+            sorting: [
+                {id: 'name', desc: false}
+            ]
+        }
     })
     return <div className={createClass("m-2", "p-2", "border-slate-950", "border-2", getBackgroundColor(currentECTS, props.category.minECTS, props.category.maxECTS))}>
 
@@ -137,10 +143,10 @@ export function CategoryContainer(props: CategoryContainerProps) {
                         {headerGroup.headers.map((header, index) => <th className={`${index == 2 ? "w-20 border-l-2 border-gray-500" : index == 1 ? "w-48" : ""}`} key={header.id}>
                             {header.isPlaceholder
                                 ? null
-                                : flexRender(
+                                : <div className="cursor-pointer" onClick={header.column.getToggleSortingHandler()}>{flexRender(
                                     header.column.columnDef.header,
                                     header.getContext()
-                                )}
+                                )}</div>}
                         </th>)}
                     </tr>
                 ))}</thead>

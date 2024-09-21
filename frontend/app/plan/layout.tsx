@@ -15,7 +15,6 @@ export default function Layout({
     const { user } = useLogin(pathname, true);
     const { pickedModules } = useGetPickedModules(user.token)
     function onToggle() {
-        console.log(pathname)
         if (pathname.endsWith("categories")) {
             router.push("/plan/semesters")
         } else {

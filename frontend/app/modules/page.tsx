@@ -219,8 +219,6 @@ export default function Page() {
     }
     const getModulesOfCategoryType = (type: CategoryType) => {
         const catOfType = type.categories.map(c => c.categoryID);
-        console.log(catOfType)
-        console.log(modules)
         return modules.filter(m => m.categories.find(c => catOfType.includes(c.categoryID))).map(m => m.moduleID);
 
     };
