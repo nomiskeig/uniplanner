@@ -11,16 +11,9 @@ export interface TopBarProps {
 
 }
 
-
-
 export default function TopBar(props: TopBarProps) {
     const userContext = useContext(UserContext);
     const { t } = useTranslation();
-
-
-
-
-
 
     return <div className="flex">
         <div className={topBarButtonsClasses}>
@@ -38,7 +31,8 @@ export default function TopBar(props: TopBarProps) {
             }
         </div>
         <div className={topBarButtonsClasses}>
-            <button onClick={() => props.handleLogout()}>Log out</button>
+            {props.user.isLoggedIn ?
+                <button onClick={() => props.handleLogout()}>Log out</button> : <div></div>}
         </div>
     </div>
 
