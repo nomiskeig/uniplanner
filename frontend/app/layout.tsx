@@ -16,6 +16,7 @@ import { useRouter } from "next/navigation";
 import { NotificationType, Notification, NotificationContext } from "@/components/NotificationContext";
 import { NotificationDisplay } from "@/components/NotificationDisplay";
 import { SemesterContext } from "@/components/SemesterContext";
+import { API_URL } from "./global.tsx"
 
 export default function RootLayout({
 
@@ -42,7 +43,7 @@ export default function RootLayout({
 
     }
     useEffect(() => {
-        fetch('http://localhost:8080/api/v1/data/semesters', {
+        fetch(API_URL + '/api/v1/data/semesters', {
             method: 'GET'
         }).then(res => res.json()).then(data => {console.log(data.data);setPossibleSemesters(data.data)});
         if (!user.isLoggedIn) {

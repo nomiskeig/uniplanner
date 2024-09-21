@@ -4,7 +4,7 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     ports:
-      - "3000:3000"
+      - "3001:3001"
 
     
   backend:
@@ -16,8 +16,6 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8080:8080"
-    secrets:
-      - db_password
 
 
       
