@@ -2,7 +2,7 @@
 
 
 import { Button } from "@/components/Button";
-import { Dropdown, DropdownOption } from "@/components/Dropdown";
+import { SelectDropdown, DropdownOption } from "@/components/SelectDropdown";
 import { Input } from "@/components/Input";
 import { SemesterContext } from "@/components/SemesterContext";
 import { UserContext } from "@/components/UserContext";
@@ -78,7 +78,7 @@ export default function Page() {
                 <Input title={"Username"} type={"text"} value={usernameInput} onChange={(newValue: string) => setUsernameInput(newValue)}></Input>
                 <Input title={"Password"} type={"password"} value={passwordInput} onChange={(newValue: string) => setPasswordInput(newValue)}></Input>
                 <Input title={"Repeat password"} type={"password"} value={passwordInput2} onChange={(newValue: string) => setPasswordInput2(newValue)}></Input>
-                <Dropdown options={semesterOptions} defaultIndex={0} title="Pick the starting semester"></Dropdown>
+                <SelectDropdown options={semesterOptions} defaultIndex={0} title="Pick the starting semester"></SelectDropdown>
             </div>
             <Button className="mt-10"onClick={handleRegister} text={"Register"}></Button>
         </div>
