@@ -16,7 +16,6 @@ import { API_URL } from "../global.tsx";
 
 
 
-
 export default function Page() {
 
     const [modules, setModules] = React.useState<Module[]>(() => [])
@@ -31,6 +30,10 @@ export default function Page() {
 
     const { i18n, t } = useTranslation();
     const { pickedModules, reloadPickedModules } = useGetPickedModules(user.token);
+    function getDisplayName(name: string): string {
+        return t(name + "CategoryType");
+
+    }
     const columns = [
 
 
@@ -226,9 +229,9 @@ export default function Page() {
     const categoryPickerOptions: DropdownProps<CategoryType> = {
         title: t("category"),
         options:
-            categoryTypes.concat([{ name: "All categories", typeID: 0, categories: [...categories] }]).map(type => ({
+            categoryTypes.concat([{ name: "allCategories", typeID: 0, categories: [...categories] }]).map(type => ({
                 element: type,
-                name: type.name,
+                name: getDisplayName(type.name),
                 callback: (newCatType: CategoryType) => {
                     setCurrentCategoryType(newCatType);
                     setColumnFilters(([...columnFilters.filter(item => item.id != 'id'), {
@@ -313,7 +316,7 @@ export default function Page() {
                                     >{flexRender(
                                         header.column.columnDef.header,
                                         header.getContext()
-                                        )}</div>}
+                                    )}</div>}
                             </th>
                         ))}
                     </tr>

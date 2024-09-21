@@ -34,7 +34,14 @@ i18n.use(initReactI18next).init({
                 noInfo: "No information",
                 courses: "Courses",
                 type: "Type",
-                hello: "Hello"
+                hello: "Hello",
+                inDepthCategoryType: "in depth modules",
+                masterThesisCategoryType: "master thesis",
+                pickAreaCategoryType: "pick area modules",
+                supplementaryCategoryType: "supplementary modules",
+                higherQualificationsCategoryType: "higher qualification modules",
+                allCategoriesCategoryType: "all categories"
+
 
 
             }
@@ -65,7 +72,13 @@ i18n.use(initReactI18next).init({
                 noInfo: "Keine Information",
                 courses: "Lehrveranstaltungen",
                 type: "Typ",
-                hello: "Hallo"
+                hello: "Hallo",
+                inDepthCategoryType: "Vertiefungsfach",
+                masterThesisCategoryType: "Masterarbeit",
+                pickAreaCategoryType: "Wahlbereich",
+                supplementaryCategoryType: "Ergänzungsfach",
+                higherQualificationsCategoryType: "Überfachline Qualifikationen",
+                allCategoriesCategoryType: "Alle Kategorien"
 
             }
         }
