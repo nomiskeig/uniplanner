@@ -2,6 +2,7 @@ import { Category, Module, PickedModule, Semester } from "@/app/types"
 import { createClass } from "@/utils"
 import { createColumnHelper, flexRender, getCoreRowModel, getSortedRowModel, useReactTable } from "@tanstack/react-table"
 import Link from "next/link"
+import { useNotificiations } from "@/hooks/useNotifications";
 import { useContext } from "react"
 import { SemesterContext } from "./SemesterContext"
 import { InlineDropdown, InlineDropdownOption, InlineDropdownProps } from "./InlineDropdown"
@@ -32,6 +33,7 @@ export function CategoryContainer(props: CategoryContainerProps) {
     const semesterContext = useContext(SemesterContext);
     const columnHelper = createColumnHelper<PickedModule>()
     const { user } = useContext(UserContext);
+    const { addNotification } = useNotificiations();
     const columns = [
         columnHelper.accessor('module.name', {
             header: e => <span>Name</span>,
@@ -150,7 +152,14 @@ export function CategoryContainer(props: CategoryContainerProps) {
                                 "categoryID": props.category.categoryID,
                                 "moduleID": m.moduleID
                             })
-                        }).then(() => props.reloadModulePicks())
+                        }).then(res => {
+                            if (!res.ok) {
+                                res.json().then(data => addNotification("Error when adding module: " + data.message, "Error"));
+                                    throw res
+
+                            }
+                            props.reloadModulePicks()
+                        })
                     }
                 }))}
                     title="Add module" defaultIndex={1} showSelectedElement={false}></PickDropdown>
@@ -161,7 +170,7 @@ export function CategoryContainer(props: CategoryContainerProps) {
             <table className="table-fixed border-gray-500 border-2 w-full">
                 <thead>{table.getHeaderGroups().map(headerGroup => (
                     <tr className="border-slate-500 border-b-2 bg-gray-400" key={headerGroup.id}>
-                        {headerGroup.headers.map((header, index) => <th className={`${index == 2 ? "w-20 border-l-2 border-gray-500" : index == 1 ? "w-48 border-l-2 border-gray-500" : index == 3 ? "w-8 border-l-2 border-gray-500": ""}`} key={header.id}>
+                        {headerGroup.headers.map((header, index) => <th className={`${index == 2 ? "w-20 border-l-2 border-gray-500" : index == 1 ? "w-48 border-l-2 border-gray-500" : index == 3 ? "w-8 border-l-2 border-gray-500" : ""}`} key={header.id}>
                             {header.isPlaceholder
                                 ? null
                                 : <div className="cursor-pointer" onClick={header.column.getToggleSortingHandler()}>{flexRender(
