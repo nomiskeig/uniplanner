@@ -3,7 +3,7 @@
 import { ColumnFiltersState, FilterFn, createColumnHelper, flexRender, getCoreRowModel, getFilteredRowModel, getSortedRowModel, useReactTable } from "@tanstack/react-table";
 import { Category, CategoryType, InDepthModule, Module, PickedCategories, PickedModule, Turnus } from "../types.ts";
 import React, { useContext, useEffect, useState } from "react";
-import { Dropdown, DropdownProps } from "@/components/Dropdown.tsx";
+import { SelectDropdown, DropdownProps } from "@/components/SelectDropdown.tsx";
 import Link from "next/link";
 import { UserContext } from "@/components/UserContext.ts";
 import { ButtonMenu, ButtonMenuOption } from "@/components/ButtonMenu.tsx";
@@ -290,12 +290,12 @@ export default function Page() {
         <div className="mb-10 text-3xl font-bold">{t("moduleOverview")}</div>
         <div className="flex mb-10 gap-6">
             <div className="flex-auto">
-                <Dropdown {...categoryPickerOptions} ></Dropdown>
-                {showInDepthPicker ? <Dropdown {...inDepthPickerOptions}></Dropdown> : null}
-                {showSupplementaryPicker ? <Dropdown {...supplementaryPickerOptions}></Dropdown> : null}
+                <SelectDropdown {...categoryPickerOptions} ></SelectDropdown>
+                {showInDepthPicker ? <SelectDropdown {...inDepthPickerOptions}></SelectDropdown> : null}
+                {showSupplementaryPicker ? <SelectDropdown {...supplementaryPickerOptions}></SelectDropdown> : null}
             </div>
             <div className="flex-auto">
-                <Dropdown {...turnusPickerOptions}></Dropdown>
+                <SelectDropdown {...turnusPickerOptions}></SelectDropdown>
 
             </div>
         </div>
