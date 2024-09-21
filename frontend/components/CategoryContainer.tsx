@@ -8,6 +8,7 @@ import { InlineDropdown, InlineDropdownOption, InlineDropdownProps } from "./Inl
 import { PickDropdown } from "./PickDropdown"
 import { UserContext } from "./UserContext"
 import { API_URL } from "@/app/global"
+import { ButtonMenu } from "./ButtonMenu"
 
 
 export interface CategoryContainerProps {
@@ -90,6 +91,26 @@ export function CategoryContainer(props: CategoryContainerProps) {
         columnHelper.accessor('module.ects', {
             header: e => <span>ECTS</span>,
             cell: info => info.getValue()
+        }),
+        columnHelper.display({
+            id: 'actions',
+            cell: localProps => <div><ButtonMenu options={[{
+                text: "Remove", action: () => {
+                    fetch(API_URL + "/api/v1/plan/removeModulePick", {
+                        method: "POST",
+                        headers: {
+                            'Authorization': "Bearer " + user.token,
+                            'Content-Type': 'application/json',
+                        },
+                        mode: 'cors',
+                        body: JSON.stringify({
+                            "categoryID": localProps.row.original.category.categoryID,
+                            "moduleID": localProps.row.original.module.moduleID
+                        }),
+                    }).then(() => props.reloadModulePicks())
+
+                }
+            }]}></ButtonMenu></div>
         })
 
     ]
@@ -101,7 +122,7 @@ export function CategoryContainer(props: CategoryContainerProps) {
         getSortedRowModel: getSortedRowModel(),
         initialState: {
             sorting: [
-                {id: 'name', desc: false}
+                { id: 'name', desc: false }
             ]
         }
     })
@@ -140,7 +161,7 @@ export function CategoryContainer(props: CategoryContainerProps) {
             <table className="table-fixed border-gray-500 border-2 w-full">
                 <thead>{table.getHeaderGroups().map(headerGroup => (
                     <tr className="border-slate-500 border-b-2 bg-gray-400" key={headerGroup.id}>
-                        {headerGroup.headers.map((header, index) => <th className={`${index == 2 ? "w-20 border-l-2 border-gray-500" : index == 1 ? "w-48" : ""}`} key={header.id}>
+                        {headerGroup.headers.map((header, index) => <th className={`${index == 2 ? "w-20 border-l-2 border-gray-500" : index == 1 ? "w-48 border-l-2 border-gray-500" : index == 3 ? "w-8 border-l-2 border-gray-500": ""}`} key={header.id}>
                             {header.isPlaceholder
                                 ? null
                                 : <div className="cursor-pointer" onClick={header.column.getToggleSortingHandler()}>{flexRender(
