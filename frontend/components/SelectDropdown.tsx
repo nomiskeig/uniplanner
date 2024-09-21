@@ -5,6 +5,7 @@ export interface DropdownProps<T> {
     defaultIndex: number
     title: string
     current?: DropdownOption<T>
+    showSelectedElement?: boolean
 
 }
 export interface DropdownOption<T> {
@@ -14,10 +15,13 @@ export interface DropdownOption<T> {
 
 }
 
-export function Dropdown<T>(props: DropdownProps<T>) {
+export function SelectDropdown<T>(props: DropdownProps<T>) {
     let [expanded, setExpanded] = React.useState(false);
-    let [current, setCurrent] = React.useState<DropdownOption<T>>(props.options[props.defaultIndex]);
+    let [current, setCurrent] = React.useState<DropdownOption<T>| null>(props.options[props.defaultIndex]);
     let ref = useOutsideClick(() => { setExpanded(false) });
+    if (current == null) {
+        return;
+    }
     return <div className="w-full">
         <div className="">{props.title}</div>
         <div className="w-full">

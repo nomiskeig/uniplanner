@@ -2,7 +2,7 @@
 
 
 import { CategoryContainer } from "@/components/CategoryContainer";
-import { Dropdown, DropdownOption } from "@/components/Dropdown";
+import { SelectDropdown, DropdownOption } from "@/components/SelectDropdown";
 import { useRouter } from "next/navigation";
 import React, { useContext, useEffect } from "react"
 import { useTranslation } from "react-i18next";
@@ -22,7 +22,7 @@ export default function Page() {
 
     const { categories, categoryTypes, modules, isLoading, error } = useGetPublicData(1);
     const { user, isLoggedIn } = useLogin("/plan/categories", true);
-    const { pickedModules, pickedModulesError, isPickedModulesLoading } = useGetPickedModules(user.token);
+    const { pickedModules, pickedModulesError, isPickedModulesLoading, reloadPickedModules } = useGetPickedModules(user.token);
     const { pickedCategories, setPickedCategories, pickedCategoriesError, isPickedCategoriesLoading } = useGetPickedCategories(user.token);
     const { addNotification } = useNotificiations();
     const { i18n, t } = useTranslation();
@@ -159,30 +159,39 @@ export default function Page() {
         <div className="text-2xl m-2 mt-10">Categories</div>
         <div>
             <div className="p-2">
-                <Dropdown title={`${t("pickedIn")} ${t("inDepthModule")} 1`} options={indepth1PickerOptions} defaultIndex={inDepth1Default} ></Dropdown>
-                <Dropdown title={`${t("pickedIn")} ${t("inDepthModule")} 2`} options={indepth2PickerOptions} defaultIndex={inDepth2Default} ></Dropdown>
-                <Dropdown title={`${t("pickedIn")} ${t("supplementaryModule")}`} options={supplementaryPickerOptions} defaultIndex={supplementaryDefault} ></Dropdown>
+                <SelectDropdown title={`${t("pickedIn")} ${t("inDepthModule")} 1`} options={indepth1PickerOptions} defaultIndex={inDepth1Default} ></SelectDropdown>
+                <SelectDropdown title={`${t("pickedIn")} ${t("inDepthModule")} 2`} options={indepth2PickerOptions} defaultIndex={inDepth2Default} ></SelectDropdown>
+                <SelectDropdown title={`${t("pickedIn")} ${t("supplementaryModule")}`} options={supplementaryPickerOptions} defaultIndex={supplementaryDefault} ></SelectDropdown>
             </div>
             <div className="">
                 <CategoryContainer
+                    reloadModulePicks={ () => reloadPickedModules()}
                     name={`${t("inDepthModule")} 1`}
                     category={inDepth1Cat}
                     data={pickedInDepth1Modules}
+                    modulesOfCategory={modules.filter(m => (m.categories.find(c => c.categoryID == inDepth1Cat.categoryID)) ? true : false)}
                 ></CategoryContainer>
                 <CategoryContainer
+                    reloadModulePicks={ () => reloadPickedModules()}
                     name={`${t("inDepthModule")} 2`}
                     category={inDepth2Cat}
                     data={pickedInDepth2Modules}
+                    modulesOfCategory={modules.filter(m => (m.categories.find(c => c.categoryID == inDepth2Cat.categoryID)) ? true : false)}
                 ></CategoryContainer>
                 <CategoryContainer
+                    reloadModulePicks={ () => reloadPickedModules()}
                     name={`${t("supplementaryModule")}`}
                     category={supplementaryCat}
                     data={pickedSupplementaryModules}
+                    modulesOfCategory={modules.filter(m => (m.categories.find(c => c.categoryID == supplementaryCat.categoryID)) ? true : false)}
                 ></CategoryContainer>
                 <CategoryContainer
+                    reloadModulePicks={ () => reloadPickedModules()}
+                    
                     name={`Wahlbereich`}
                     category={categories.find(c => c.name == "Wahlbereich Informatik")!}
                     data={pickedPickAreaModules}
+                    modulesOfCategory={modules.filter(m => (m.categories.find(c => c.name == "Wahlbereich Informatik")) ? true : false)}
                 ></CategoryContainer>
             </div>
         </div>

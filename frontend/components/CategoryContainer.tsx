@@ -5,12 +5,17 @@ import Link from "next/link"
 import { useContext } from "react"
 import { SemesterContext } from "./SemesterContext"
 import { InlineDropdown, InlineDropdownOption, InlineDropdownProps } from "./InlineDropdown"
+import { PickDropdown } from "./PickDropdown"
 import { UserContext } from "./UserContext"
+import { API_URL } from "@/app/global"
+
 
 export interface CategoryContainerProps {
     name: string
     data: PickedModule[]
     category: Category
+    modulesOfCategory: Module[],
+    reloadModulePicks: () => void
 
 }
 
@@ -29,7 +34,6 @@ export function CategoryContainer(props: CategoryContainerProps) {
     const { user } = useContext(UserContext);
     const columns = [
         columnHelper.accessor('module.name', {
-
             header: e => <span>Name</span>,
             cell: info => {
                 return <Link href={`/modules/${info.row.original.module.stringID}`}>{info.getValue()}</Link>
@@ -97,9 +101,35 @@ export function CategoryContainer(props: CategoryContainerProps) {
     })
     return <div className={createClass("m-2", "p-2", "border-slate-950", "border-2", getBackgroundColor(currentECTS, props.category.minECTS, props.category.maxECTS))}>
 
-        <div className="text-xl font-bold">{props.name}</div>
-        <div className="text-xl"> {props.category.name}</div>
-        <div className="justify-self-end">ECTS: {currentECTS} of {props.category.minECTS}-{props.category.maxECTS}</div>
+        <div className="flex flex-row">
+            <div>
+                <div className="text-xl font-bold">{props.name}</div>
+                <div className="text-xl"> {props.category.name}</div>
+                <div className="justify-self-end">ECTS: {currentECTS} of {props.category.minECTS}-{props.category.maxECTS}</div>
+            </div>
+            <div className="ml-auto">
+                <PickDropdown<Module> options={props.modulesOfCategory.map(m => ({
+                    name: m.name,
+                    element: m,
+                    callback: () => {
+                        fetch(API_URL + "/api/v1/plan/addModulePick", {
+                            method: "POST",
+                            headers: {
+                                'Authorization': "Bearer " + user.token,
+                                'Content-Type': 'application/json',
+                            },
+                            mode: 'cors',
+                            body: JSON.stringify({
+                                "categoryID": props.category.categoryID,
+                                "moduleID": m.moduleID
+                            })
+                        }).then(() => props.reloadModulePicks())
+                    }
+                }))}
+                    title="Add module" defaultIndex={1} showSelectedElement={false}></PickDropdown>
+
+            </div>
+        </div>
         <div>
             <table className="table-fixed border-gray-500 border-2 w-full">
                 <thead>{table.getHeaderGroups().map(headerGroup => (
