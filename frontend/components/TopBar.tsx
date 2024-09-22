@@ -4,7 +4,7 @@ import { useContext, useEffect, useState } from "react";
 import { UserContext } from "./UserContext";
 import { User } from "@/app/types";
 
-const topBarButtonsClasses = "p-1 bg-gray-400 cursor-pointer w-32"
+const topBarButtonsClasses = "rounded-lg m-2 p-1 bg-blue-400 cursor-pointer w-32 text-center"
 export interface TopBarProps {
     handleLogout: () => void,
     user: User
@@ -15,7 +15,7 @@ export default function TopBar(props: TopBarProps) {
     const userContext = useContext(UserContext);
     const { t } = useTranslation();
 
-    return <div className="flex">
+    return <div className="flex bg-blue-300 h-12">
         <div className={topBarButtonsClasses}>
             <Link href="/modules">Modules</Link>
         </div>
@@ -30,10 +30,10 @@ export default function TopBar(props: TopBarProps) {
                     <Link href="/login">Log in</Link>
             }
         </div>
-        <div className={topBarButtonsClasses}>
-            {props.user.isLoggedIn ?
-                <button onClick={() => props.handleLogout()}>Log out</button> : <div></div>}
-        </div>
+        {props.user.isLoggedIn && 
+            <div className={topBarButtonsClasses}>
+                <button onClick={() => props.handleLogout()}>Log out</button>
+            </div>}
     </div>
 
 }
