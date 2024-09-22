@@ -1,6 +1,7 @@
 'use client'
 
 import { Button } from "@/components/Button"
+import { JsonExport } from "@/components/JsonExport";
 import { useGetPickedModules } from "@/hooks/useGetPickedModules";
 import { useLogin } from "@/hooks/useLogin";
 import { usePathname, useRouter } from "next/navigation";
@@ -28,9 +29,10 @@ export default function Layout({
 
     return <div>
         <div>
-            <div className="flex m-2">
-                <div className="text-xl mr-10">Overview</div>
-                <Button onClick={onToggle} text={"Toggle view"}></Button>
+            <div className="flex m-2 gap-6">
+                <div className="text-xl ">Overview</div>
+                <Button className="" onClick={onToggle} text={"Toggle view"}></Button>
+                <JsonExport picks={pickedModules}></JsonExport>
             </div>
                 <div className="grid m-2 grid-cols-5 border-2 border-black w-2/5">
                     <div className="p-1 bg-gray-200">Total ECTS</div>
