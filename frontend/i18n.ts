@@ -40,7 +40,8 @@ i18n.use(initReactI18next).init({
                 pickAreaCategoryType: "pick area modules",
                 supplementaryCategoryType: "supplementary modules",
                 higherQualificationsCategoryType: "higher qualification modules",
-                allCategoriesCategoryType: "all categories"
+                allCategoriesCategoryType: "all categories",
+                StammmoduleCategoryType: "essential modules"
 
 
 
@@ -78,7 +79,8 @@ i18n.use(initReactI18next).init({
                 pickAreaCategoryType: "Wahlbereich",
                 supplementaryCategoryType: "Ergänzungsfach",
                 higherQualificationsCategoryType: "Überfachline Qualifikationen",
-                allCategoriesCategoryType: "Alle Kategorien"
+                allCategoriesCategoryType: "Alle Kategorien",
+                StammmoduleCategoryType: "Stammmodule"
 
             }
         }

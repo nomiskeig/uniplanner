@@ -14,8 +14,15 @@ public class MappingEntity {
     private int module;
     private int category;
     private int studyCourse;
+    private boolean pickable;
 
-    @JsonIgnore
+    public boolean isPickable() {
+		return pickable;
+	}
+	public void setPickable(boolean pickable) {
+		this.pickable = pickable;
+	}
+	@JsonIgnore
 	public int getModuleToCategoryMapping_id() {
 		return moduleToCategoryMapping_id;
 	}

@@ -45,7 +45,8 @@ export interface CategoryType {
 
 export interface ModuleToCategoryMapping {
     categoryName: string,
-    moduleID: string
+    moduleID: string,
+    pickable: boolean
 }
 
 export interface ModulePartToModuleMapping {

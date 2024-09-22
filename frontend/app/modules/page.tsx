@@ -18,7 +18,7 @@ import { useGetPublicData } from "@/hooks/useGetPublicData.tsx";
 
 
 export default function Page() {
-    const {modules, categories, categoryTypes, isLoading} = useGetPublicData(1);
+    const { modules, categories, categoryTypes, isLoading } = useGetPublicData(1);
 
     const [studyCourse, setStudyCourse] = React.useState<number>(1);
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
@@ -79,7 +79,7 @@ export default function Page() {
 
     function getButtonMenuOptions(module: Module): ButtonMenuOption[] {
         // find the categories which the module can belong to
-        let possibleCategories = module.categories.filter(cat => (cat.type.name != "inDepth" && cat.type.name != "supplementary") || Object.values(pickedCategories).map(cat => cat.categoryID).includes(cat.categoryID))
+        let possibleCategories = module.categories.filter(cat => (cat.type.name != "inDepth" && cat.type.name != "supplementary" && cat.type.name != "Stammmodule") || Object.values(pickedCategories).map(cat => cat.categoryID).includes(cat.categoryID))
 
         // check if the one of the possible categories is already picked, cause it is not possible to add the module to another category
         // if this is the case, return 
@@ -222,6 +222,7 @@ export default function Page() {
         title: t("category"),
         options:
             categoryTypes.concat([{ name: "allCategories", typeID: 0, categories: [...categories] }]).map(type => ({
+
                 element: type,
                 name: getDisplayName(type.name),
                 callback: (newCatType: CategoryType) => {

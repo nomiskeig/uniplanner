@@ -88,6 +88,7 @@ export async function createTables() {
         + 'category int,'
         + 'module int,'
         + 'studyCourse int,'
+        + 'pickable bool,'
         + 'primary key(moduleToCategoryMapping_id),'
         + 'foreign key(category) references category(category_id),'
         + 'foreign key(module) references module(module_id),'
@@ -145,10 +146,10 @@ export async function addModuleToCategoryMappings(mappings: ModuleToCategoryMapp
     for (let m of mappings) {
         const categoryID = await conn.query("SELECT category_id from category where name = (?)", m.categoryName).then(res => res[0].category_id)
         const moduleID = await conn.query("SELECT module_id from module where module_string_id = (?)", m.moduleID).then(res => res[0].module_id)
-        data.push([categoryID, moduleID, studyCourseID])
+        data.push([categoryID, moduleID, studyCourseID, m.pickable])
 
     }
-    await conn.batch('INSERT INTO moduleToCategoryMapping (category, module, studyCourse) values (?, ?, ?)', data)
+    await conn.batch('INSERT INTO moduleToCategoryMapping (category, module, studyCourse, pickable) values (?, ?, ?, ?)', data)
 
 
 }

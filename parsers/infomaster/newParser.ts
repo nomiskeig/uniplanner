@@ -216,7 +216,7 @@ export const infomasterParser: Parser = {
                 categories.push({
                     type: { name: INDEPTHTYPE },
                     name: text.match(/Vertiefungsfach: (.*)/)![1],
-                    ...parsedEcts
+                    ...parsedEcts,
                 });
 
 
@@ -225,7 +225,7 @@ export const infomasterParser: Parser = {
                 categories.push({
                     type: { name: SUPPLEMENTARYTYPE },
                     name: text.match(/Ergänzungsfach: (.*)/)![1],
-                    ...parsedEcts
+                    ...parsedEcts,
                 });
             }
 
@@ -233,7 +233,7 @@ export const infomasterParser: Parser = {
                 categories.push({
                     name: "Wahlbereich Informatik",
                     type: { name: PICKAREA },
-                    ...parsedEcts
+                    ...parsedEcts,
                 });
             }
             if (text.startsWith("Masterarbeit") && !gotMasterThesis) {
@@ -242,18 +242,27 @@ export const infomasterParser: Parser = {
                     type: { name: MASTERTHESIS },
                     name: "Masterarbeit",
 
-                    ...parsedEcts
+                    ...parsedEcts,
                 });
             }
             if (text.startsWith("Überfachliche")) {
                 categories.push({
                     type: { name: HIGHERQUALI },
                     name: "Überfachliche Qualifikationen",
-                    ...parsedEcts
+                    ...parsedEcts,
+
                 });
             }
 
         }
+        categories.push({
+            type: { name: "Stammmodule" },
+            name: "Stammmodule",
+            minECTS: "24",
+            maxECTS: "24",
+
+
+        })
         return categories;
     },
 
@@ -272,7 +281,8 @@ export const infomasterParser: Parser = {
                 let moduleID = $(elem).children().first().text();
                 mappings.push({
                     categoryName: categoryname,
-                    moduleID: moduleID
+                    moduleID: moduleID,
+                    pickable: true
                 });
 
 
@@ -280,6 +290,16 @@ export const infomasterParser: Parser = {
             });
 
 
+        }
+        const modules = this.getModules();
+        for (let m of modules) {
+            if (m.isStammmodul) {
+                mappings.push({
+                    categoryName: "Stammmodule",
+                    moduleID: m.id,
+                    pickable: false
+                })
+            }
         }
         return mappings;
 
