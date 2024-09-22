@@ -22,7 +22,7 @@ export function NotificationDisplay(props: NotificationDisplayProps) {
             case "Warning": return "bg-orange-400"
         }
     }
-    return <div className="absolute right-[30px] top-[30px] w-[500px] rounded flex flex-col gap-4">
+    return <div className="fixed right-[30px] top-[30px] w-[500px] rounded flex flex-col gap-4">
         {notificationContext.notifications.map((not,index) => {
             return <div key={index} className={`flex p-2 rounded ${getColor(not)}`}>
                 <div className="grow">{getText(not)}</div>
