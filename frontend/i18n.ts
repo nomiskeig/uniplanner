@@ -55,7 +55,7 @@ i18n.use(initReactI18next).init({
                 pickArea: "Wahlbereich",
                 moduleOverview: "Modulübersicht",
                 category: "Kategorie",
-                allCategegories: "Alle Kategorien",
+                allCategories: "Alle Kategorien",
                 anyTurnus: "Jeder Turnus",
                 responsible: "Verantwortlich",
                 partOf: "Bestandteil von",

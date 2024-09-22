@@ -12,6 +12,7 @@ import { useLogin } from "@/hooks/useLogin.tsx";
 import { useTranslation } from "react-i18next";
 import { API_URL } from "../global.tsx";
 import { useGetPublicData } from "@/hooks/useGetPublicData.tsx";
+import { useModulePageCache } from "@/hooks/useModulePageCache.tsx";
 
 
 
@@ -21,8 +22,7 @@ export default function Page() {
     const { modules, categories, categoryTypes, isLoading } = useGetPublicData(1);
 
     const [studyCourse, setStudyCourse] = React.useState<number>(1);
-    const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
-    const [currentCategoryType, setCurrentCategoryType] = React.useState<CategoryType>({ name: "All categories", typeID: 0, categories: [] });
+    const { columnFilters, setColumnFilters, currentCategoryType, setCurrentCategoryType, setCachedIndepthCategoryIndex, cachedIndepthCategoryIndex } = useModulePageCache(categories);
     const [pickedCategories, setPickedCategories] = useState<PickedCategories | {}>({})
     const columnHelper = createColumnHelper<Module>();
     const { isLoggedIn, user } = useLogin("/modules", false);
@@ -168,12 +168,13 @@ export default function Page() {
     }
     const inDepthPickerOptions: DropdownProps<Category> = {
         title: t('inDepthModule'),
-        defaultIndex: 0,
+        defaultIndex: cachedIndepthCategoryIndex,
         options:
             categories.filter(cat => cat.type.name == "inDepth").map(cat => ({
                 element: cat,
                 name: cat.name,
-                callback: (newCat: Category) => {
+                callback: (newCat: Category, index: number) => {
+                setCachedIndepthCategoryIndex(index);
                     setColumnFilters(([...columnFilters.filter(item => item.id != 'id'), {
                         id: "id",
                         value: newCat.modules.map(m => m.moduleID)
@@ -235,6 +236,11 @@ export default function Page() {
                 }
             })),
         defaultIndex: 0,
+        current: {
+            element: currentCategoryType,
+            name: t(currentCategoryType.name),
+            callback: () => { }
+        }
 
     }
 

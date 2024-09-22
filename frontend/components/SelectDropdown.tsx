@@ -11,13 +11,13 @@ export interface DropdownProps<T> {
 export interface DropdownOption<T> {
     name: string,
     element: T
-    callback: (option: T) => void | boolean
+    callback: (option: T, index: number) => void | boolean
 
 }
 
 export function SelectDropdown<T>(props: DropdownProps<T>) {
     let [expanded, setExpanded] = React.useState(false);
-    let [current, setCurrent] = React.useState<DropdownOption<T> | null>(props.options[props.defaultIndex]);
+    let [current, setCurrent] = React.useState<DropdownOption<T> | null>(props.current ? props.current : props.options[props.defaultIndex]);
     let ref = useOutsideClick(() => { setExpanded(false) });
     if (current == null) {
         return;
@@ -31,7 +31,7 @@ export function SelectDropdown<T>(props: DropdownProps<T>) {
             {expanded ? <div ref={ref} className="absolute border-black border-2 mt-2 rounded">{props.options.map((option, index) => {
                 return <div className={`cursor-pointer py-1 px-2 hover:bg-gray-300 border-black ${current.name == option.name ? "bg-gray-400" : "bg-gray-200"}`}
                     onClick={() => {
-                        option.callback(option.element);
+                        option.callback(option.element, index);
                         setCurrent(option);
                         setExpanded(false);
                     }}
