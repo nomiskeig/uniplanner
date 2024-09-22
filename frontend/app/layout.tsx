@@ -32,6 +32,7 @@ export default function RootLayout({
     let [notificationCounter, setNotificationCounter] = React.useState<number>(0);
     let [semester, setSemester] = React.useState<Semester | null>(null)
     let [possibleSemesters, setPossibleSemesters] = React.useState<Semester[]>([]);
+    let notificationsCorrect: Notification[] = [];
 
 
     function getSemesterFromID(id: string): Semester {
@@ -45,7 +46,7 @@ export default function RootLayout({
     useEffect(() => {
         fetch(API_URL + '/api/v1/data/semesters', {
             method: 'GET'
-        }).then(res => res.json()).then(data => {setPossibleSemesters(data.data)});
+        }).then(res => res.json()).then(data => { setPossibleSemesters(data.data) });
         if (!user.isLoggedIn) {
             return;
         }
@@ -65,12 +66,15 @@ export default function RootLayout({
     }
 
     function addNotification(text: string, type: NotificationType) {
-        setNotifications([...notifications, { text: text, type: type, id: notificationCounter }])
+        let newNotification = { text: text, type: type, id: notificationCounter }
+        setNotifications([...notifications, newNotification])
+        notificationsCorrect.push(newNotification)
+        setTimeout(() => removeNotification(newNotification), 4000);
         setNotificationCounter(notificationCounter + 1);
 
     }
     function removeNotification(notification: Notification) {
-        setNotifications(notifications.filter(n => n.id !== notification.id))
+        setNotifications(notificationsCorrect.filter(n => n.id !== notification.id))
     }
     function setStartingSemster(s: Semester) {
 
