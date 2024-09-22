@@ -11,17 +11,16 @@ import { useGetPickedModules } from "@/hooks/useGetPickedModules.tsx";
 import { useLogin } from "@/hooks/useLogin.tsx";
 import { useTranslation } from "react-i18next";
 import { API_URL } from "../global.tsx";
+import { useGetPublicData } from "@/hooks/useGetPublicData.tsx";
 
 
 
 
 
 export default function Page() {
+    const {modules, categories, categoryTypes, isLoading} = useGetPublicData(1);
 
-    const [modules, setModules] = React.useState<Module[]>(() => [])
     const [studyCourse, setStudyCourse] = React.useState<number>(1);
-    const [categories, setCategories] = React.useState<Category[]>(() => [])
-    const [categoryTypes, setCategoryTypes] = React.useState<CategoryType[]>(() => [])
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
     const [currentCategoryType, setCurrentCategoryType] = React.useState<CategoryType>({ name: "All categories", typeID: 0, categories: [] });
     const [pickedCategories, setPickedCategories] = useState<PickedCategories | {}>({})
@@ -29,7 +28,7 @@ export default function Page() {
     const { isLoggedIn, user } = useLogin("/modules", false);
 
     const { i18n, t } = useTranslation();
-    const { pickedModules, reloadPickedModules } = useGetPickedModules(user.token);
+    const { pickedModules, reloadPickedModules, isPickedModulesLoading } = useGetPickedModules(user.token);
     function getDisplayName(name: string): string {
         return t(name + "CategoryType");
 
@@ -138,11 +137,6 @@ export default function Page() {
     }
 
 
-    useEffect(() => {
-        fetch(API_URL + `/api/v1/data/modules?studyCourseID=${studyCourse}`).then((res => res.json())).then((data) => setModules(data.data)).catch(err => console.log(err))
-        fetch(API_URL + `/api/v1/data/categories?studyCourseID=${studyCourse}`).then((res => res.json())).then((data) => setCategories(data.data)).catch(err => console.log(err))
-        fetch(API_URL + `/api/v1/data/categoryTypes?studyCourseID=${studyCourse}`).then((res => res.json())).then((data) => setCategoryTypes(data.data)).catch(err => console.log(err))
-    }, [studyCourse])
     useEffect(() => {
         if (user.isLoggedIn) {
             fetch(API_URL + '/api/v1/plan/getCategoryPicks', {
