@@ -16,24 +16,14 @@ export default function TopBar(props: TopBarProps) {
     const { t } = useTranslation();
 
     return <div className="flex bg-blue-300 h-12">
-        <div className={topBarButtonsClasses}>
-            <Link href="/modules">Modules</Link>
-        </div>
-        <div className={topBarButtonsClasses}>
-            <Link href="/plan/categories">Plan</Link>
-        </div>
+        <Link className={topBarButtonsClasses} href="/modules">Modules</Link>
+        <Link className={topBarButtonsClasses} href="/plan/categories">Plan</Link>
         <div className="flex-1"></div>
-        <div className={topBarButtonsClasses}>
-            {
-                props.user.isLoggedIn ?
-                    <div>{t('hello')}, {userContext.user.username}</div> :
-                    <Link href="/login">Log in</Link>
-            }
-        </div>
-        {props.user.isLoggedIn && 
-            <div className={topBarButtonsClasses}>
-                <button onClick={() => props.handleLogout()}>Log out</button>
-            </div>}
-    </div>
+        {props.user.isLoggedIn ?
+            <div className={topBarButtonsClasses}>{t('hello')}, {userContext.user.username}</div> :
+            <Link className={topBarButtonsClasses} href="/login">Log in</Link>
+        }
+        {props.user.isLoggedIn && <button className={topBarButtonsClasses} onClick={() => props.handleLogout()}>Log out</button>}
 
+    </div>
 }
