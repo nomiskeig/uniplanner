@@ -8,6 +8,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useContext, useEffect } from "react";
 import { API_URL } from "../global";
+import { useNotificiations } from "@/hooks/useNotifications";
 
 function writeToCookie(token: string, username: string) {
     document.cookie = "token=" + token
@@ -17,6 +18,7 @@ function writeToCookie(token: string, username: string) {
 export default function Page() {
     const [usernameInput, setUsernameInput] = React.useState<string>("");
     const [passwordInput, setPasswordInput] = React.useState<string>("");
+    const { addNotification } = useNotificiations();
     const userContext = useContext(UserContext)
     const router = useRouter();
     function handleLogin() {
@@ -34,7 +36,7 @@ export default function Page() {
         })
             .then(res => {
                 if (!res.ok) {
-                    alert("Error when logging in: " + res.status)
+                    addNotification("Could not log in.", "Error");
 
                 }
 
@@ -54,8 +56,8 @@ export default function Page() {
                 <Input title={"Password"} type={"password"} value={passwordInput} onChange={(newValue: string) => setPasswordInput(newValue)}></Input>
             </div>
             <div className="mt-10 flex gap-4">
-            <Button onClick={handleLogin} text={"Log in"}></Button>
-            <Button onClick={() => router.push("/register")} text={"Register"}></Button>
+                <Button onClick={handleLogin} text={"Log in"}></Button>
+                <Button onClick={() => router.push("/register")} text={"Register"}></Button>
             </div>
         </div>
 
