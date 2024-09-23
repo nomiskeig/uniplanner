@@ -12,13 +12,14 @@ export default function Page() {
     const { pickedModules, reloadPickedModules } = useGetPickedModules(user.token);
 
 
-    const semesters: Semester[] = pickedModules.filter(pm => pm.semester != null).map(pm => pm.semester!).reduce((acc, curr) => {
-        if (!acc.find(s => s.id == curr.id)) {
-            return acc.concat([curr]);
-
+    const allSemesters: Semester[] = pickedModules.filter(pm => pm.semester != null).map(pm => pm.semester!);
+    let semesters: Semester[] = [];
+    for (let s of allSemesters) {
+        if (!semesters.find(se => se.id == s.id)) {
+            semesters.push(s);
         }
-        return acc;
-    }, []);
+
+    }
     return <div>
         <div className="text-2xl m-2 mt-10">Semesters</div>
         {semesters.map((s, i) => {
